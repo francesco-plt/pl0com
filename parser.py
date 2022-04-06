@@ -184,21 +184,25 @@ class Parser:
             return ir.WhileStat(cond=cond, body=body, symtab=symtab)
         # for loop parsing
         # syntax:
-        # for STMT , COND , STMT do BODY done
-        # where STMT, COND, STMT are respectively init, cond and step
-        # init, cond, step, body, symtab
+        # for INIT COND STEP do BODY done
+        # where INIT, COND, STEP are respectively
+        # an assignment, a condition and another assignment
         elif self.accept("forsym"):
-            # this needs to be replaced
-            # we need to copy from the assignment statement
             init = self.statement(symtab)
-            self.expect("comma")
+            self.expect("semicolon")
+
             cond = self.condition(symtab)
-            self.expect("comma")
+            self.expect("semicolon")
+
             step = self.statement(symtab)
-            self.expect("colon")
+            self.expect("semicolon")
+
+            self.expect("dosym")
             body = self.statement(symtab)
-            return ir.WhileStat(init=init, cond=cond, step=step, body=body, symtab=symtab)
-        
+            self.expect("donesym")
+
+            return ir.ForStat(init=init, cond=cond, step=step, body=body, symtab=symtab)
+
         elif self.accept("print"):
             exp = self.expression(symtab)
             return ir.PrintStat(exp=exp, symtab=symtab)

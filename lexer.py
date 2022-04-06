@@ -4,46 +4,44 @@
 
 # Tokens can have multiple definitions if needed
 TOKEN_DEFS = {
-    'lparen': ['('],
-    'rparen': [')'],
-    'lspar': ['['],
-    'rspar': [']'],
-    'colon': [':'],
-    'times': ['*'],
-    'slash': ['/'],
-    'plus': ['+'],
-    'minus': ['-'],
-    'eql': ['='],
-    'neq': ['!='],
-    'lss': ['<'],
-    'leq': ['<='],
-    'gtr': ['>'],
-    'geq': ['>='],
-    'callsym': ['call'],
-    'beginsym': ['begin'],
-    'semicolon': [';'],
-    'endsym': ['end'],
-    'ifsym': ['if'],
-    'whilesym': ['while'],
-    'becomes': [':='],
-    'thensym': ['then'],
-    'elsesym': ['else'],
-    'dosym': ['do'],
-    'constsym': ['const'],
-    'comma': [','],
-    'varsym': ['var'],
-    'procsym': ['procedure'],
-    'period': ['.'],
-    'oddsym': ['odd'],
-    'print': ['!', 'print'],
-    'read': ['?', 'read'],
+    "lparen": ["("],
+    "rparen": [")"],
+    "lspar": ["["],
+    "rspar": ["]"],
+    "colon": [":"],
+    "times": ["*"],
+    "slash": ["/"],
+    "plus": ["+"],
+    "minus": ["-"],
+    "eql": ["="],
+    "neq": ["!="],
+    "lss": ["<"],
+    "leq": ["<="],
+    "gtr": [">"],
+    "geq": [">="],
+    "callsym": ["call"],
+    "beginsym": ["begin"],
+    "semicolon": [";"],
+    "endsym": ["end"],
+    "ifsym": ["if"],
+    "whilesym": ["while"],
+    "becomes": [":="],
+    "thensym": ["then"],
+    "elsesym": ["else"],
+    "dosym": ["do"],
+    "constsym": ["const"],
+    "comma": [","],
+    "varsym": ["var"],
+    "procsym": ["procedure"],
+    "period": ["."],
+    "oddsym": ["odd"],
+    "print": ["!", "print"],
+    "read": ["?", "read"],
     # 1st implementation of for loop
     # for STMT , COND , STMT do BODY done
     # where STMT, COND, STMT are respectively init, cond and step
-    'forsym': ['for'],
-    'colon': [':'],
-    'donesym': ['done']
-
+    "forsym": ["for"],
+    "donesym": ["done"],
 }
 
 
@@ -58,23 +56,26 @@ class Lexer:
 
     def skip_whitespace(self):
         in_comment = False
-        while self.pos < len(self.text) and (self.text[self.pos].isspace() or self.text[self.pos] == '{' or in_comment):
-            if self.text[self.pos] == '{' and not in_comment:
+        while self.pos < len(self.text) and (
+            self.text[self.pos].isspace() or self.text[self.pos] == "{" or in_comment
+        ):
+            if self.text[self.pos] == "{" and not in_comment:
                 in_comment = True
-            elif in_comment and self.text[self.pos] == '}':
+            elif in_comment and self.text[self.pos] == "}":
                 in_comment = False
             self.pos += 1
 
     def check_symbol(self):
         for s, t in self.str_to_token:
-            if self.text[self.pos:self.pos+len(s)].lower() == s:
+            if self.text[self.pos : self.pos + len(s)].lower() == s:
                 self.pos += len(s)
                 return t, s
         return None, None
 
     def check_regex(self, regex):
         import re
-        match = re.match(regex, self.text[self.pos:])
+
+        match = re.match(regex, self.text[self.pos :])
         if not match:
             return None
         found = match.group(0)
@@ -90,71 +91,30 @@ class Lexer:
             if s:
                 yield t, s
                 continue
-            t = self.check_regex(r'[0-9]+')
+            t = self.check_regex(r"[0-9]+")
             if t:
-                yield 'number', int(t)
+                yield "number", int(t)
                 continue
-            t = self.check_regex(r'\w+')
+            t = self.check_regex(r"\w+")
             if t:
-                yield 'ident', t
+                yield "ident", t
                 continue
-            try : t = self.text[self.pos] 
-            except Exception : t='end of file' # at end of file this will fail because self.pos >= len(self.text)
-            yield 'illegal', t
+            try:
+                t = self.text[self.pos]
+            except Exception:
+                t = "end of file"  # at end of file this will fail because self.pos >= len(self.text)
+            yield "illegal", t
             break
 
 
 # Test support
-__test_program = '''VAR x, y, squ;
-VAR arr[5]: char;
-var multid[5][5]: short;
-
-{This is a comment. You can write anything you want in a comment}
-
-PROCEDURE square;
-VAR test;
+__test_program = """var i;
 BEGIN
-   test := 1234;
-   squ := x * x
-END;
- 
-BEGIN
-   x := -1;
-   
-   read x;
-   if x > 100 then begin
-      print -x
-   end else begin
-      print x
-   end;
+    for i := 0; i < 4; i := i + 1; do
+        print i
+    done
+END;"""
 
-   x := 1;
-   WHILE x <= 10 DO
-   BEGIN
-      CALL square;
-      x:=x+1;
-      !squ
-   END;
-   
-   x := 101;
-   while x <= 105 do begin
-    arr[x-100] := x;
-    !arr[x-100];
-    x := x + 1
-   end;
-   
-   x := 1;
-   y := 1;
-   while x <= 5 do begin
-    while y <= 5 do begin
-      multid[x][y] := arr[x];
-      !multid[x][y];
-      x := x + 1;
-      y := y + 1
-    end
-  end
-END.'''
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     for t, w in Lexer(__test_program).tokens():
         print(t, w)

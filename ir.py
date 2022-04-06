@@ -15,7 +15,7 @@ tempcount = 0
 
 def new_temporary(symtab, type):
     global tempcount
-    temp = Symbol(name='t' + str(tempcount), stype=type, alloct='reg')
+    temp = Symbol(name="t" + str(tempcount), stype=type, alloct="reg")
     tempcount += 1
     return temp
 
@@ -31,8 +31,8 @@ def new_temporary(symtab, type):
 # register is provided.
 
 
-BASE_TYPES = ['Int', 'Label', 'Struct', 'Function']
-TYPE_QUALIFIERS = ['unsigned']
+BASE_TYPES = ["Int", "Label", "Struct", "Function"]
+TYPE_QUALIFIERS = ["unsigned"]
 
 
 class Type:
@@ -45,12 +45,12 @@ class Type:
         self.name = name if name else self.default_name()
 
     def default_name(self):
-        n = ''
-        if 'unsigned' in self.qual_list:
-            n += 'u'
-        n += 'int'  # no float types exist at the moment
+        n = ""
+        if "unsigned" in self.qual_list:
+            n += "u"
+        n += "int"  # no float types exist at the moment
         n += repr(self.size)
-        n += '_t'
+        n += "_t"
         return n
 
 
@@ -59,7 +59,9 @@ class ArrayType(Type):
         """dims is a list of dimensions: dims = [5]: array of 5 elements;
         dims = [5, 5]: 5x5 matrix; and so on"""
         self.dims = dims
-        super().__init__(name, reduce(lambda a, b: a * b, dims) * basetype.size, basetype)
+        super().__init__(
+            name, reduce(lambda a, b: a * b, dims) * basetype.size, basetype
+        )
         self.name = name if name else self.default_name()
 
     def default_name(self):
@@ -70,7 +72,7 @@ class StructType(Type):  # currently unused
     def __init__(self, name, size, fields):
         self.fields = fields
         realsize = sum([f.size for f in self.fields])
-        super().__init__(name, realsize, 'Struct', [])
+        super().__init__(name, realsize, "Struct", [])
 
     def get_size(self):
         return sum([f.size for f in self.fields])
@@ -78,39 +80,39 @@ class StructType(Type):  # currently unused
 
 class LabelType(Type):
     def __init__(self):
-        super().__init__('label', 0, 'Label', [])
+        super().__init__("label", 0, "Label", [])
         self.ids = 0
 
     def __call__(self, target=None):
         self.ids += 1
-        return Symbol(name='label' + repr(self.ids), stype=self, value=target)
+        return Symbol(name="label" + repr(self.ids), stype=self, value=target)
 
 
 class FunctionType(Type):
     def __init__(self):
-        super().__init__('function', 0, 'Function', [])
+        super().__init__("function", 0, "Function", [])
 
 
 class PointerType(Type):
     def __init__(self, ptrto):
         """ptrto is the type of the object that this pointer points to."""
-        super().__init__('&' + ptrto.name, 32, 'Int', ['unsigned'])
+        super().__init__("&" + ptrto.name, 32, "Int", ["unsigned"])
         self.pointstotype = ptrto
 
 
 TYPENAMES = {
-    'int': Type('int', 32, 'Int'),
-    'short': Type('short', 16, 'Int'),
-    'char': Type('char', 8, 'Int'),
-    'uchar': Type('uchar', 8, 'Int', ['unsigned']),
-    'uint': Type('uint', 32, 'Int', ['unsigned']),
-    'ushort': Type('ushort', 16, 'Int', ['unsigned']),
+    "int": Type("int", 32, "Int"),
+    "short": Type("short", 16, "Int"),
+    "char": Type("char", 8, "Int"),
+    "uchar": Type("uchar", 8, "Int", ["unsigned"]),
+    "uint": Type("uint", 32, "Int", ["unsigned"]),
+    "ushort": Type("ushort", 16, "Int", ["unsigned"]),
     # 'float': Type('float', 32, 'Float'),
-    'label': LabelType(),
-    'function': FunctionType(),
+    "label": LabelType(),
+    "function": FunctionType(),
 }
 
-ALLOC_CLASSES = ['global', 'auto', 'reg', 'imm']
+ALLOC_CLASSES = ["global", "auto", "reg", "imm"]
 
 
 class Symbol:
@@ -120,7 +122,7 @@ class Symbol:
       ('auto') or in the data section ('global')
     - allocation to an immediate ('imm')"""
 
-    def __init__(self, name, stype, value=None, alloct='auto'):
+    def __init__(self, name, stype, value=None, alloct="auto"):
         self.name = name
         self.stype = stype
         self.value = value  # if not None, it is a constant
@@ -131,8 +133,14 @@ class Symbol:
         self.allocinfo = allocinfo
 
     def __repr__(self):
-        base = self.alloct + ' ' + self.stype.name + ' ' + self.name + \
-               (self.value if type(self.value) == str else '')
+        base = (
+            self.alloct
+            + " "
+            + self.stype.name
+            + " "
+            + self.name
+            + (self.value if type(self.value) == str else "")
+        )
         if self.allocinfo is not None:
             base = base + "; " + repr(self.allocinfo)
         return base
@@ -140,17 +148,17 @@ class Symbol:
 
 class SymbolTable(list):
     def find(self, name):
-        print('Looking up', name)
+        print("Looking up", name)
         for s in self:
             if s.name == name:
                 return s
-        print('Looking up failed!')
+        print("Looking up failed!")
         return None
 
     def __repr__(self):
-        res = 'SymbolTable:\n'
+        res = "SymbolTable:\n"
         for s in self:
-            res += repr(s) + '\n'
+            res += repr(s) + "\n"
         return res
 
     def exclude(self, barred_types):
@@ -158,6 +166,7 @@ class SymbolTable(list):
 
 
 # IRNODE
+
 
 class IRNode:  # abstract
     def __init__(self, parent=None, children=None, symtab=None):
@@ -175,9 +184,9 @@ class IRNode:  # abstract
 
     def __repr__(self):
         try:
-            label = self.get_label().name + ': '
+            label = self.get_label().name + ": "
         except Exception:
-            label = ''
+            label = ""
             pass
         try:
             hre = self.human_repr()
@@ -185,38 +194,68 @@ class IRNode:  # abstract
         except Exception:
             pass
 
-        attrs = {'body', 'cond', 'value', 'thenpart', 'elsepart', 'symbol', 'call', 'step', 'expr', 'target', 'defs',
-                 'global_symtab', 'local_symtab', 'offset'} & set(dir(self))
+        attrs = {
+            "body",
+            "cond",
+            "value",
+            "thenpart",
+            "elsepart",
+            "symbol",
+            "call",
+            "step",
+            "expr",
+            "target",
+            "defs",
+            "global_symtab",
+            "local_symtab",
+            "offset",
+        } & set(dir(self))
 
-        res = repr(type(self)) + ' ' + repr(id(self)) + ' {\n'
+        res = repr(type(self)) + " " + repr(id(self)) + " {\n"
         if self.parent is not None:
-            res += 'parent = ' + repr(id(self.parent)) + '\n'
+            res += "parent = " + repr(id(self.parent)) + "\n"
         else:
             # a missing parent is not a bug only for the root node, but at this
             # level of abstraction there is no way to distinguish between the root
             # node and a node with a missing parent
-            res += '                                                                      <<<<<----- BUG? MISSING PARENT\n'
+            res += "                                                                      <<<<<----- BUG? MISSING PARENT\n"
 
         res = label + res
 
         # print 'NODE', type(self), id(self)
-        if 'children' in dir(self) and len(self.children):
-            res += '\tchildren:\n'
+        if "children" in dir(self) and len(self.children):
+            res += "\tchildren:\n"
             for node in self.children:
                 rep = repr(node)
-                res += '\n'.join(['\t' + s for s in rep.split('\n')]) + '\n'
+                res += "\n".join(["\t" + s for s in rep.split("\n")]) + "\n"
         for d in attrs:
             node = getattr(self, d)
             rep = repr(node)
-            res += '\t' + d + ': ' + '\n'.join(['\t' + s for s in rep.split('\n')]) + '\n'
-        res += '}'
+            res += (
+                "\t" + d + ": " + "\n".join(["\t" + s for s in rep.split("\n")]) + "\n"
+            )
+        res += "}"
         return res
 
     def navigate(self, action):
-        attrs = {'body', 'cond', 'value', 'thenpart', 'elsepart', 'symbol', 'call', 'step', 'expr', 'target', 'defs',
-                 'global_symtab', 'local_symtab', 'offset'} & set(dir(self))
-        if 'children' in dir(self) and len(self.children):
-            print('navigating children of', type(self), id(self), len(self.children))
+        attrs = {
+            "body",
+            "cond",
+            "value",
+            "thenpart",
+            "elsepart",
+            "symbol",
+            "call",
+            "step",
+            "expr",
+            "target",
+            "defs",
+            "global_symtab",
+            "local_symtab",
+            "offset",
+        } & set(dir(self))
+        if "children" in dir(self) and len(self.children):
+            print("navigating children of", type(self), id(self), len(self.children))
             for node in self.children:
                 try:
                     node.navigate(action)
@@ -225,18 +264,32 @@ class IRNode:  # abstract
         for d in attrs:
             try:
                 getattr(self, d).navigate(action)
-                print('successfully navigated attr ', d, ' of', type(self), id(self))
+                print("successfully navigated attr ", d, " of", type(self), id(self))
             except Exception:
                 pass
         action(self)
 
     def replace(self, old, new):
         new.parent = self
-        if 'children' in dir(self) and len(self.children) and old in self.children:
+        if "children" in dir(self) and len(self.children) and old in self.children:
             self.children[self.children.index(old)] = new
             return True
-        attrs = {'body', 'cond', 'value', 'thenpart', 'elsepart', 'symbol', 'call', 'step', 'expr', 'target', 'defs',
-                 'global_symtab', 'local_symtab', 'offset'} & set(dir(self))
+        attrs = {
+            "body",
+            "cond",
+            "value",
+            "thenpart",
+            "elsepart",
+            "symbol",
+            "call",
+            "step",
+            "expr",
+            "target",
+            "defs",
+            "global_symtab",
+            "local_symtab",
+            "offset",
+        } & set(dir(self))
         for d in attrs:
             try:
                 if getattr(self, d) == old:
@@ -248,7 +301,7 @@ class IRNode:  # abstract
 
     def get_function(self):
         if not self.parent:
-            return 'global'
+            return "global"
         elif type(self.parent) == FunctionDef:
             return self.parent
         else:
@@ -263,6 +316,7 @@ class IRNode:  # abstract
 
 # CONST and VAR
 
+
 class Const(IRNode):
     def __init__(self, parent=None, value=0, symb=None, symtab=None):
         super().__init__(parent, None, symtab)
@@ -271,12 +325,18 @@ class Const(IRNode):
 
     def lower(self):
         if self.symbol is None:
-            new = new_temporary(self.symtab, TYPENAMES['int'])
-            loadst = LoadImmStat(dest=new, val=self.value, symtab=self.symtab)
+            new = new_temporary(self.symtab, TYPENAMES["int"])
+            loadst = LoadImmStat(
+                dest=new, val=self.value, symtab=self.symtab
+            )  # constant lowered into an load immediate stmt
         else:
             new = new_temporary(self.symtab, self.symbol.stype)
-            loadst = LoadStat(dest=new, symbol=self.symbol, symtab=self.symtab)
-        return self.parent.replace(self, StatList(children=[loadst], symtab=self.symtab))
+            loadst = LoadStat(
+                dest=new, symbol=self.symbol, symtab=self.symtab
+            )  # variable lowered into a load statement
+        return self.parent.replace(
+            self, StatList(children=[loadst], symtab=self.symtab)
+        )
 
 
 class Var(IRNode):
@@ -294,7 +354,9 @@ class Var(IRNode):
         a following stage for doing the computations (destination())"""
         new = new_temporary(self.symtab, self.symbol.stype)
         loadst = LoadStat(dest=new, symbol=self.symbol, symtab=self.symtab)
-        return self.parent.replace(self, StatList(children=[loadst], symtab=self.symtab))
+        return self.parent.replace(
+            self, StatList(children=[loadst], symtab=self.symtab)
+        )
 
 
 class ArrayElement(IRNode):
@@ -322,7 +384,7 @@ class ArrayElement(IRNode):
         ptrreg = new_temporary(self.symtab, PointerType(self.symbol.stype.basetype))
         loadptr = LoadPtrToSym(dest=ptrreg, symbol=self.symbol, symtab=self.symtab)
         src = new_temporary(self.symtab, PointerType(self.symbol.stype.basetype))
-        add = BinStat(dest=src, op='plus', srca=ptrreg, srcb=off, symtab=self.symtab)
+        add = BinStat(dest=src, op="plus", srca=ptrreg, srcb=off, symtab=self.symtab)
         statl += [loadptr, add]
 
         statl += [LoadStat(dest=dest, symbol=src, symtab=self.symtab)]
@@ -330,6 +392,7 @@ class ArrayElement(IRNode):
 
 
 # EXPRESSIONS
+
 
 class Expr(IRNode):  # abstract
     def get_operator(self):
@@ -354,14 +417,20 @@ class BinExpr(Expr):
         srcb = self.children[2].destination()
 
         # Type promotion.
-        if ('unsigned' in srca.stype.qual_list) and ('unsigned' in srcb.stype.qual_list):
-            desttype = Type(None, max(srca.stype.size, srcb.stype.size), 'Int', ['unsigned'])
+        if ("unsigned" in srca.stype.qual_list) and (
+            "unsigned" in srcb.stype.qual_list
+        ):
+            desttype = Type(
+                None, max(srca.stype.size, srcb.stype.size), "Int", ["unsigned"]
+            )
         else:
-            desttype = Type(None, max(srca.stype.size, srcb.stype.size), 'Int')
+            desttype = Type(None, max(srca.stype.size, srcb.stype.size), "Int")
 
         dest = new_temporary(self.symtab, desttype)
 
-        stmt = BinStat(dest=dest, op=self.children[0], srca=srca, srcb=srcb, symtab=self.symtab)
+        stmt = BinStat(
+            dest=dest, op=self.children[0], srca=srca, srcb=srcb, symtab=self.symtab
+        )
         statl = [self.children[1], self.children[2], stmt]
         return self.parent.replace(self, StatList(children=statl, symtab=self.symtab))
 
@@ -391,6 +460,7 @@ class CallExpr(Expr):
 
 # STATEMENTS
 
+
 class Stat(IRNode):  # abstract
     def __init__(self, parent=None, children=None, symtab=None):
         super().__init__(parent, children, symtab)
@@ -419,7 +489,9 @@ class CallStat(Stat):
         self.call.parent = self
 
     def collect_uses(self):
-        return self.call.collect_uses() + self.symtab.exclude([TYPENAMES['function'], TYPENAMES['label']])
+        return self.call.collect_uses() + self.symtab.exclude(
+            [TYPENAMES["function"], TYPENAMES["label"]]
+        )
 
     def lower(self):
         dest = self.call.symbol
@@ -428,7 +500,9 @@ class CallStat(Stat):
 
 
 class IfStat(Stat):
-    def __init__(self, parent=None, cond=None, thenpart=None, elsepart=None, symtab=None):
+    def __init__(
+        self, parent=None, cond=None, thenpart=None, elsepart=None, symtab=None
+    ):
         super().__init__(parent, [], symtab)
         self.cond = cond
         self.thenpart = thenpart
@@ -439,21 +513,38 @@ class IfStat(Stat):
             self.elsepart.parent = self
 
     def lower(self):
-        exit_label = TYPENAMES['label']()
+        exit_label = TYPENAMES["label"]()
         exit_stat = EmptyStat(self.parent, symtab=self.symtab)
         exit_stat.set_label(exit_label)
         if self.elsepart:
-            then_label = TYPENAMES['label']()
+            then_label = TYPENAMES["label"]()
             self.thenpart.set_label(then_label)
-            branch_to_then = BranchStat(None, self.cond.destination(), then_label, self.symtab)
+            branch_to_then = BranchStat(
+                None, self.cond.destination(), then_label, self.symtab
+            )
             branch_to_exit = BranchStat(None, None, exit_label, self.symtab)
-            stat_list = StatList(self.parent,
-                                 [self.cond, branch_to_then, self.elsepart, branch_to_exit, self.thenpart, exit_stat],
-                                 self.symtab)
+            stat_list = StatList(
+                self.parent,
+                [
+                    self.cond,
+                    branch_to_then,
+                    self.elsepart,
+                    branch_to_exit,
+                    self.thenpart,
+                    exit_stat,
+                ],
+                self.symtab,
+            )
             return self.parent.replace(self, stat_list)
         else:
-            branch_to_exit = BranchStat(None, self.cond.destination(), exit_label, self.symtab, negcond=True)
-            stat_list = StatList(self.parent, [self.cond, branch_to_exit, self.thenpart, exit_stat], self.symtab)
+            branch_to_exit = BranchStat(
+                None, self.cond.destination(), exit_label, self.symtab, negcond=True
+            )
+            stat_list = StatList(
+                self.parent,
+                [self.cond, branch_to_exit, self.thenpart, exit_stat],
+                self.symtab,
+            )
             return self.parent.replace(self, stat_list)
 
 
@@ -466,19 +557,25 @@ class WhileStat(Stat):
         self.body.parent = self
 
     def lower(self):
-        entry_label = TYPENAMES['label']()
-        exit_label = TYPENAMES['label']()
+        entry_label = TYPENAMES["label"]()
+        exit_label = TYPENAMES["label"]()
         exit_stat = EmptyStat(self.parent, symtab=self.symtab)
         exit_stat.set_label(exit_label)
         self.cond.set_label(entry_label)
-        branch = BranchStat(None, self.cond.destination(), exit_label, self.symtab, negcond=True)
+        branch = BranchStat(
+            None, self.cond.destination(), exit_label, self.symtab, negcond=True
+        )
         loop = BranchStat(None, None, entry_label, self.symtab)
-        stat_list = StatList(self.parent, [self.cond, branch, self.body, loop, exit_stat], self.symtab)
+        stat_list = StatList(
+            self.parent, [self.cond, branch, self.body, loop, exit_stat], self.symtab
+        )
         return self.parent.replace(self, stat_list)
 
 
 class ForStat(Stat):  # incomplete
-    def __init__(self, parent=None, init=None, cond=None, step=None, body=None, symtab=None):
+    def __init__(
+        self, parent=None, init=None, cond=None, step=None, body=None, symtab=None
+    ):
         super().__init__(parent, [], symtab)
         self.init = init
         self.cond = cond
@@ -538,7 +635,9 @@ class AssignStat(Stat):
             ptrreg = new_temporary(self.symtab, PointerType(desttype))
             loadptr = LoadPtrToSym(dest=ptrreg, symbol=dst, symtab=self.symtab)
             dst = new_temporary(self.symtab, PointerType(desttype))
-            add = BinStat(dest=dst, op='plus', srca=ptrreg, srcb=off, symtab=self.symtab)
+            add = BinStat(
+                dest=dst, op="plus", srca=ptrreg, srcb=off, symtab=self.symtab
+            )
             stats += [self.offset, loadptr, add]
 
         stats += [StoreStat(dest=dst, symbol=src, symtab=self.symtab)]
@@ -564,14 +663,14 @@ class PrintCommand(Stat):  # low-level node
     def __init__(self, parent=None, src=None, symtab=None):
         super().__init__(parent, [], symtab)
         self.src = src
-        if src.alloct != 'reg':
-            raise RuntimeError('value not in register')
+        if src.alloct != "reg":
+            raise RuntimeError("value not in register")
 
     def collect_uses(self):
         return [self.src]
 
     def human_repr(self):
-        return 'print ' + repr(self.src)
+        return "print " + repr(self.src)
 
 
 class ReadStat(Stat):
@@ -579,7 +678,7 @@ class ReadStat(Stat):
         super().__init__(parent, [], symtab)
 
     def lower(self):
-        tmp = new_temporary(self.symtab, TYPENAMES['int'])
+        tmp = new_temporary(self.symtab, TYPENAMES["int"])
         read = ReadCommand(dest=tmp, symtab=self.symtab)
         stlist = StatList(children=[read], symtab=self.symtab)
         return self.parent.replace(self, stlist)
@@ -589,8 +688,8 @@ class ReadCommand(Stat):  # low-level node
     def __init__(self, parent=None, dest=None, symtab=None):
         super().__init__(parent, [], symtab)
         self.dest = dest
-        if dest.alloct != 'reg':
-            raise RuntimeError('read not to register')
+        if dest.alloct != "reg":
+            raise RuntimeError("read not to register")
 
     def destination(self):
         return self.dest
@@ -602,11 +701,19 @@ class ReadCommand(Stat):  # low-level node
         return [self.dest]
 
     def human_repr(self):
-        return 'read ' + repr(self.dest)
+        return "read " + repr(self.dest)
 
 
 class BranchStat(Stat):  # low-level node
-    def __init__(self, parent=None, cond=None, target=None, symtab=None, returns=False, negcond=False):
+    def __init__(
+        self,
+        parent=None,
+        cond=None,
+        target=None,
+        symtab=None,
+        returns=False,
+        negcond=False,
+    ):
         """cond == None -> branch always taken.
         If negcond is True and Cond != None, the branch is taken when cond is false,
         otherwise the branch is taken when cond is true.
@@ -614,8 +721,8 @@ class BranchStat(Stat):  # low-level node
         super().__init__(parent, [], symtab)
         self.cond = cond
         self.negcond = negcond
-        if not (self.cond is None) and self.cond.alloct != 'reg':
-            raise RuntimeError('condition not in register')
+        if not (self.cond is None) and self.cond.alloct != "reg":
+            raise RuntimeError("condition not in register")
         self.target = target
         self.returns = returns
 
@@ -631,14 +738,14 @@ class BranchStat(Stat):  # low-level node
 
     def human_repr(self):
         if self.returns:
-            h = 'call '
+            h = "call "
         else:
-            h = 'branch '
+            h = "branch "
         if not (self.cond is None):
-            c = 'on ' + ('not ' if self.negcond else '') + repr(self.cond)
+            c = "on " + ("not " if self.negcond else "") + repr(self.cond)
         else:
-            c = ''
-        return h + c + ' to ' + repr(self.target)
+            c = ""
+        return h + c + " to " + repr(self.target)
 
 
 class EmptyStat(Stat):  # low-level node
@@ -656,10 +763,10 @@ class LoadPtrToSym(Stat):  # low-level node
         super().__init__(parent, [], symtab)
         self.symbol = symbol
         self.dest = dest
-        if self.symbol.alloct == 'reg':
-            raise RuntimeError('symbol not in memory')
-        if self.dest.alloct != 'reg':
-            raise RuntimeError('dest not to register')
+        if self.symbol.alloct == "reg":
+            raise RuntimeError("symbol not in memory")
+        if self.dest.alloct != "reg":
+            raise RuntimeError("dest not to register")
 
     def collect_uses(self):
         return [self.symbol]
@@ -671,7 +778,7 @@ class LoadPtrToSym(Stat):  # low-level node
         return self.dest
 
     def human_repr(self):
-        return repr(self.dest) + ' <- &(' + repr(self.symbol) + ')'
+        return repr(self.dest) + " <- &(" + repr(self.symbol) + ")"
 
 
 class StoreStat(Stat):  # low-level node
@@ -684,18 +791,18 @@ class StoreStat(Stat):  # low-level node
         location in memory."""
         super().__init__(parent, [], symtab)
         self.symbol = symbol
-        if self.symbol.alloct != 'reg':
-            raise RuntimeError('store not from register')
+        if self.symbol.alloct != "reg":
+            raise RuntimeError("store not from register")
         self.dest = dest
         self.killhint = killhint
 
     def collect_uses(self):
-        if self.dest.alloct == 'reg':
+        if self.dest.alloct == "reg":
             return [self.symbol, self.dest]
         return [self.symbol]
 
     def collect_kills(self):
-        if self.dest.alloct == 'reg':
+        if self.dest.alloct == "reg":
             if self.killhint:
                 return [self.killhint]
             else:
@@ -706,9 +813,9 @@ class StoreStat(Stat):  # low-level node
         return self.dest
 
     def human_repr(self):
-        if self.dest.alloct == 'reg':
-            return '[' + repr(self.dest) + '] <- ' + repr(self.symbol)
-        return repr(self.dest) + ' <- ' + repr(self.symbol)
+        if self.dest.alloct == "reg":
+            return "[" + repr(self.dest) + "] <- " + repr(self.symbol)
+        return repr(self.dest) + " <- " + repr(self.symbol)
 
 
 class LoadStat(Stat):  # low-level node
@@ -722,8 +829,8 @@ class LoadStat(Stat):  # low-level node
         self.symbol = symbol
         self.dest = dest
         self.usehint = usehint
-        if self.dest.alloct != 'reg':
-            raise RuntimeError('load not to register')
+        if self.dest.alloct != "reg":
+            raise RuntimeError("load not to register")
 
     def collect_uses(self):
         if self.usehint:
@@ -737,10 +844,10 @@ class LoadStat(Stat):  # low-level node
         return self.dest
 
     def human_repr(self):
-        if self.symbol.alloct == 'reg':
-            return repr(self.dest) + ' <- [' + repr(self.symbol) + ']'
+        if self.symbol.alloct == "reg":
+            return repr(self.dest) + " <- [" + repr(self.symbol) + "]"
         else:
-            return repr(self.dest) + ' <- ' + repr(self.symbol)
+            return repr(self.dest) + " <- " + repr(self.symbol)
 
 
 class LoadImmStat(Stat):  # low-level node
@@ -748,8 +855,8 @@ class LoadImmStat(Stat):  # low-level node
         super().__init__(parent, [], symtab)
         self.val = val
         self.dest = dest
-        if self.dest.alloct != 'reg':
-            raise RuntimeError('load not to register')
+        if self.dest.alloct != "reg":
+            raise RuntimeError("load not to register")
 
     def collect_uses(self):
         return []
@@ -761,20 +868,22 @@ class LoadImmStat(Stat):  # low-level node
         return self.dest
 
     def human_repr(self):
-        return repr(self.dest) + ' <- ' + repr(self.val)
+        return repr(self.dest) + " <- " + repr(self.val)
 
 
 class BinStat(Stat):  # low-level node
-    def __init__(self, parent=None, dest=None, op=None, srca=None, srcb=None, symtab=None):
+    def __init__(
+        self, parent=None, dest=None, op=None, srca=None, srcb=None, symtab=None
+    ):
         super().__init__(parent, [], symtab)
         self.dest = dest  # symbol
         self.op = op
         self.srca = srca  # symbol
         self.srcb = srcb  # symbol
-        if self.dest.alloct != 'reg':
-            raise RuntimeError('binstat dest not to register')
-        if self.srca.alloct != 'reg' or self.srcb.alloct != 'reg':
-            raise RuntimeError('binstat src not in register')
+        if self.dest.alloct != "reg":
+            raise RuntimeError("binstat dest not to register")
+        if self.srca.alloct != "reg" or self.srcb.alloct != "reg":
+            raise RuntimeError("binstat src not in register")
 
     def collect_kills(self):
         return [self.dest]
@@ -786,7 +895,15 @@ class BinStat(Stat):  # low-level node
         return self.dest
 
     def human_repr(self):
-        return repr(self.dest) + ' <- ' + repr(self.srca) + ' ' + self.op + ' ' + repr(self.srcb)
+        return (
+            repr(self.dest)
+            + " <- "
+            + repr(self.srca)
+            + " "
+            + self.op
+            + " "
+            + repr(self.srcb)
+        )
 
 
 class UnaryStat(Stat):  # low-level node
@@ -795,10 +912,10 @@ class UnaryStat(Stat):  # low-level node
         self.dest = dest
         self.op = op
         self.src = src
-        if self.dest.alloct != 'reg':
-            raise RuntimeError('unarystat dest not to register')
-        if self.src.alloct != 'reg':
-            raise RuntimeError('unarystat src not in register')
+        if self.dest.alloct != "reg":
+            raise RuntimeError("unarystat dest not to register")
+        if self.src.alloct != "reg":
+            raise RuntimeError("unarystat src not in register")
 
     def collect_kills(self):
         return [self.dest]
@@ -810,17 +927,17 @@ class UnaryStat(Stat):  # low-level node
         return self.dest
 
     def human_repr(self):
-        return repr(self.dest) + ' <- ' + self.op + ' ' + repr(self.src)
+        return repr(self.dest) + " <- " + self.op + " " + repr(self.src)
 
 
 class StatList(Stat):  # low-level node
     def __init__(self, parent=None, children=None, symtab=None):
-        print('StatList : new', id(self))
+        print("StatList : new", id(self))
         super().__init__(parent, children, symtab)
 
     def append(self, elem):
         elem.parent = self
-        print('StatList: appending', id(elem), 'of type', type(elem), 'to', id(self))
+        print("StatList: appending", id(elem), "of type", type(elem), "to", id(self))
         self.children.append(elem)
 
     def collect_uses(self):
@@ -830,15 +947,15 @@ class StatList(Stat):  # low-level node
         return u
 
     def print_content(self):
-        print('StatList', id(self), ': [', end=' ')
+        print("StatList", id(self), ": [", end=" ")
         for n in self.children:
-            print(id(n), end=' ')
-        print(']')
+            print(id(n), end=" ")
+        print("]")
 
     def flatten(self):
         """Remove nested StatLists"""
         if type(self.parent) == StatList:
-            print('Flattening', id(self), 'into', id(self.parent))
+            print("Flattening", id(self), "into", id(self.parent))
             if self.get_label():
                 emptystat = EmptyStat(self, symtab=self.symtab)
                 self.children.insert(0, emptystat)
@@ -846,10 +963,19 @@ class StatList(Stat):  # low-level node
             for c in self.children:
                 c.parent = self.parent
             i = self.parent.children.index(self)
-            self.parent.children = self.parent.children[:i] + self.children + self.parent.children[i + 1:]
+            self.parent.children = (
+                self.parent.children[:i] + self.children + self.parent.children[i + 1 :]
+            )
             return True
         else:
-            print('Not flattening', id(self), 'into', id(self.parent), 'of type', type(self.parent))
+            print(
+                "Not flattening",
+                id(self),
+                "into",
+                id(self.parent),
+                "of type",
+                type(self.parent),
+            )
             return False
 
     def destination(self):
@@ -874,6 +1000,7 @@ class Block(Stat):
 
 # DEFINITIONS
 
+
 class Definition(IRNode):
     def __init__(self, parent=None, symbol=None):
         super().__init__(parent, [], None)
@@ -888,7 +1015,9 @@ class FunctionDef(Definition):
         self.body.parent = self
 
     def get_global_symbols(self):
-        return self.body.global_symtab.exclude([TYPENAMES['function'], TYPENAMES['label']])
+        return self.body.global_symtab.exclude(
+            [TYPENAMES["function"], TYPENAMES["label"]]
+        )
 
 
 class DefinitionList(IRNode):
@@ -904,7 +1033,7 @@ def print_stat_list(node):
     """Navigation action: print"""
     print(type(node), id(node))
     if type(node) == StatList:
-        print('StatList', id(node), ': [', end=' ')
+        print("StatList", id(node), ": [", end=" ")
         for n in node.children:
-            print(id(n), end=' ')
-        print(']')
+            print(id(n), end=" ")
+        print("]")

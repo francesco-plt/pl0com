@@ -174,11 +174,31 @@ class Parser:
             if self.accept("elsesym"):
                 els = self.statement(symtab)
             return ir.IfStat(cond=cond, thenpart=then, elsepart=els, symtab=symtab)
+        # while loop parsing
+        # it needs 4 elements:
+        # parent, cond, body, symtab
         elif self.accept("whilesym"):
             cond = self.condition(symtab)
             self.expect("dosym")
             body = self.statement(symtab)
             return ir.WhileStat(cond=cond, body=body, symtab=symtab)
+        # for loop parsing
+        # syntax:
+        # for STMT , COND , STMT do BODY done
+        # where STMT, COND, STMT are respectively init, cond and step
+        # init, cond, step, body, symtab
+        elif self.accept("forsym"):
+            # this needs to be replaced
+            # we need to copy from the assignment statement
+            init = self.statement(symtab)
+            self.expect("comma")
+            cond = self.condition(symtab)
+            self.expect("comma")
+            step = self.statement(symtab)
+            self.expect("colon")
+            body = self.statement(symtab)
+            return ir.WhileStat(init=init, cond=cond, step=step, body=body, symtab=symtab)
+        
         elif self.accept("print"):
             exp = self.expression(symtab)
             return ir.PrintStat(exp=exp, symtab=symtab)

@@ -18,6 +18,9 @@ def compile_program(text):
     print('\n', res, '\n')
 
     res.navigate(print_stat_list)
+    # we want a return here because we're not
+    # ready for the next part
+    return 0
 
     node_list = get_node_list(res)
     for n in node_list:

@@ -36,7 +36,14 @@ TOKEN_DEFS = {
     'period': ['.'],
     'oddsym': ['odd'],
     'print': ['!', 'print'],
-    'read': ['?', 'read']
+    'read': ['?', 'read'],
+    # 1st implementation of for loop
+    # for STMT , COND , STMT do BODY done
+    # where STMT, COND, STMT are respectively init, cond and step
+    'forsym': ['for'],
+    'colon': [':'],
+    'donesym': ['done']
+
 }
 
 

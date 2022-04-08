@@ -15,22 +15,22 @@ def compile_program(text):
     lex = lexer.Lexer(text)
     pars = parser.Parser(lex)
     res = pars.program()
-    print('\n', res, '\n')
+    print("\n", res, "\n")
 
     res.navigate(print_stat_list)
     # we want a return here because we're not
     # ready for the next part
-    return 0
+    # return 0
 
     node_list = get_node_list(res)
     for n in node_list:
-        print(type(n), id(n), '->', type(n.parent), id(n.parent))
-    print('\nTotal nodes in IR:', len(node_list), '\n')
+        print(type(n), id(n), "->", type(n.parent), id(n.parent))
+    print("\nTotal nodes in IR:", len(node_list), "\n")
 
     res.navigate(lowering)
 
     node_list = get_node_list(res)
-    print('\n', res, '\n')
+    print("\n", res, "\n")
     for n in node_list:
         print(type(n), id(n))
         try:
@@ -38,13 +38,13 @@ def compile_program(text):
         except Exception:
             pass
     # res.navigate(flattening)
-    print('\n', res, '\n')
+    print("\n", res, "\n")
 
     print_dotty(res, "log.dot")
 
     print("\n\nDATALAYOUT\n\n")
     perform_data_layout(res)
-    print('\n', res, '\n')
+    print("\n", res, "\n")
 
     cfg = CFG(res)
     cfg.liveness()
@@ -65,18 +65,20 @@ def compile_program(text):
 
 def driver_main():
     from lexer import __test_program
-    test_program=__test_program
+
+    test_program = __test_program
     import sys
+
     print(sys.argv)
     if len(sys.argv) >= 2:
-        with open(sys.argv[1], 'r') as inf :
+        with open(sys.argv[1], "r") as inf:
             test_program = inf.read()
     code = compile_program(test_program)
 
     if len(sys.argv) > 2:
-        with open(sys.argv[-1], 'w') as outf :
+        with open(sys.argv[-1], "w") as outf:
             outf.write(code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     driver_main()

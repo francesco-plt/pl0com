@@ -586,6 +586,53 @@ class ForStat(Stat):  # incomplete
         self.step.parent = self
         self.body.parent = self
 
+        """
+        while lowering, it needs to be modified
+        while statlist:
+            1. init (to be added)
+            2. cond (lowered) with label LOOP
+            3. branch to OUT
+            4. body
+            5. step (to be added)
+            6. branch to LOOP
+            7. empty stat (label OUT should be pointing here)
+        WhileStat:
+            1. cond
+            2. body
+        ForStat:
+            1. init
+            2. cond
+            3. step
+            4. body
+        """
+
+    def lower(self):
+
+        # LOOP label
+        loop_label = TYPENAMES["label"]()
+        self.cond.set_label(loop_label)
+        loop = BranchStat(None, None, loop_label, self.symtab)
+
+        # OUT label
+        out_label = TYPENAMES["label"]()
+        exit_stat = EmptyStat(self.parent, symtab=self.symtab)
+        exit_stat.set_label(out_label)
+        """cond == None -> branch always taken.
+        If negcond is True and Cond != None, the branch is taken when cond is false,
+        otherwise the branch is taken when cond is true.
+        If returns is True, this is a branch-and-link instruction."""
+        branch = BranchStat(
+            None, self.cond.destination(), out_label, self.symtab, negcond=True
+        )
+
+        # StatList to give as output
+        stat_list = StatList(
+            self.parent,
+            [self.init, self.cond, branch, self.step, self.body, loop, exit_stat],
+            self.symtab,
+        )
+        return self.parent.replace(self, stat_list)
+
 
 class AssignStat(Stat):
     def __init__(self, parent=None, target=None, offset=None, expr=None, symtab=None):

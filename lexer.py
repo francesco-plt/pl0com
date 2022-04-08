@@ -108,12 +108,14 @@ class Lexer:
 
 
 # Test support
-__test_program = """var i;
+__test_program = """var x;
 BEGIN
-    for i := 0; i < 4; i := i + 1; do
-        print i
-    done
-END;"""
+    x := 1;
+    WHILE x <= 10 DO
+    BEGIN
+        print x
+    END;
+END."""
 
 if __name__ == "__main__":
     for t, w in Lexer(__test_program).tokens():

@@ -182,11 +182,11 @@ class Parser:
             self.expect("dosym")
             body = self.statement(symtab)
             return ir.WhileStat(cond=cond, body=body, symtab=symtab)
-        # for loop parsing
-        # syntax:
-        # for INIT COND STEP do BODY done
-        # where INIT, COND, STEP are respectively
-        # an assignment, a condition and another assignment
+        """ for loop parsing
+        syntax:
+        for INIT COND STEP do BODY done
+        where INIT, COND, STEP are respectively
+        an assignment, a condition and another assignment """
         elif self.accept("forsym"):
             init = self.statement(symtab)
             self.expect("semicolon")

@@ -628,7 +628,7 @@ class ForStat(Stat):  # incomplete
         # StatList to give as output
         stat_list = StatList(
             self.parent,
-            [self.init, self.cond, branch, self.step, self.body, loop, exit_stat],
+            [self.init, self.cond, branch, self.body, self.step, loop, exit_stat],
             self.symtab,
         )
         return self.parent.replace(self, stat_list)

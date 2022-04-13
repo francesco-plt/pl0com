@@ -3,6 +3,7 @@ BEGIN
     x := 1;
     WHILE x <= 10 DO
     BEGIN
-        print x
+        print x;
+        x := x + 1
     END
 END.

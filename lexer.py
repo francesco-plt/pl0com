@@ -37,11 +37,11 @@ TOKEN_DEFS = {
     "oddsym": ["odd"],
     "print": ["!", "print"],
     "read": ["?", "read"],
-    # 1st implementation of for loop
-    # for STMT , COND , STMT do BODY done
-    # where STMT, COND, STMT are respectively init, cond and step
+    # for loop tokens
     "forsym": ["for"],
     "donesym": ["done"],
+    # inc op token
+    "inc": ["++"]
 }
 
 

@@ -77,7 +77,7 @@ class Parser:
     # a factor can be either a variable, a constant, or a parenthesized expression
     @logger
     def factor(self, symtab):
-        """F -> var | const | ( E )"""
+        """F -> var | const | ( E ) | inc var"""
         if self.accept("ident"):
             var = symtab.find(self.value)
             offs = self.array_offset(symtab)
@@ -87,6 +87,26 @@ class Parser:
                 return ir.ArrayElement(var=var, offset=offs, symtab=symtab)
         if self.accept("number"):
             return ir.Const(value=int(self.value), symtab=symtab)
+
+        if self.accept("inc"):
+            self.expect("ident")
+            var = symtab.find(self.value)
+            try:
+                offs = self.array_offset(symtab)
+            except AttributeError:
+                return ir.AssignStat(
+                target=ir.Var(var=var, symtab=symtab),
+                expr=ir.BinExpr(children=["plus", var, ir.Const(value=1, symtab=symtab)], symtab=symtab),
+                symtab=symtab,
+            )    
+
+            return ir.AssignStat(
+                target=var,
+                offset=offs,
+                expr=ir.BinExpr(children=["plus", var, ir.Const(value=1, symtab=symtab)], symtab=symtab),
+                symtab=symtab,
+            )
+
         elif self.accept("lparen"):
             expr = self.expression()
             self.expect("rparen")
@@ -110,13 +130,13 @@ class Parser:
     @logger
     def expression(self, symtab):
         op = None
-        if self.new_sym in ["plus", "minus"]:
+        if self.new_sym == "plus" or self.new_sym == "minus":
             self.getsym()
             op = self.sym
         expr = self.term(symtab)
         if op:
             expr = ir.UnExpr(children=[op, expr], symtab=symtab)
-        while self.new_sym in ["plus", "minus"]:
+        while self.new_sym == "plus" or self.new_sym == "minus":
             self.getsym()
             op = self.sym
             expr2 = self.term(symtab)
@@ -174,28 +194,24 @@ class Parser:
             if self.accept("elsesym"):
                 els = self.statement(symtab)
             return ir.IfStat(cond=cond, thenpart=then, elsepart=els, symtab=symtab)
-        # while loop parsing
-        # it needs 4 elements:
-        # parent, cond, body, symtab
+        # while loop
         elif self.accept("whilesym"):
             cond = self.condition(symtab)
             self.expect("dosym")
             body = self.statement(symtab)
             return ir.WhileStat(cond=cond, body=body, symtab=symtab)
-        # for loop parsing
-        # syntax:
-        # for INIT COND STEP do BODY done
-        # where INIT, COND, STEP are respectively
-        # an assignment, a condition and another assignment
+        # for loop
+        # sybtax: for INIT COND STEP do BODY done
+        # where INIT, COND, STEP are respectively:
+        # assgn, cond, assgn
         elif self.accept("forsym"):
             init = self.statement(symtab)
-            self.expect("semicolon")
+            self.expect("comma")
 
             cond = self.condition(symtab)
-            self.expect("semicolon")
+            self.expect("comma")
 
             step = self.statement(symtab)
-            self.expect("semicolon")
 
             self.expect("dosym")
             body = self.statement(symtab)

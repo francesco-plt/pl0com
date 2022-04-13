@@ -572,7 +572,7 @@ class WhileStat(Stat):
         return self.parent.replace(self, stat_list)
 
 
-class ForStat(Stat):  # incomplete
+class ForStat(Stat):
     def __init__(
         self, parent=None, init=None, cond=None, step=None, body=None, symtab=None
     ):
@@ -587,8 +587,7 @@ class ForStat(Stat):  # incomplete
         self.body.parent = self
 
         """
-        while lowering, it needs to be modified
-        while statlist:
+        for loop lowering:
             1. init (to be added)
             2. cond (lowered) with label LOOP
             3. branch to OUT

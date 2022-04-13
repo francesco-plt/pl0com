@@ -110,11 +110,7 @@ class Lexer:
 # Test support
 __test_program = """var x;
 BEGIN
-    x := 1;
-    WHILE x <= 10 DO
-    BEGIN
-        print x
-    END;
+    print "hello world"
 END."""
 
 if __name__ == "__main__":

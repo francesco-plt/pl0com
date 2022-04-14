@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 
-"""PL/0 recursive descent parser adapted from Wikipedia"""
+"""
+    PL/0 recursive descent parser adapted from Wikipedia
+
+    Grammar:
+    A -> B '.'
+    B -> [ VAR var (',' var)*) ';' ] | [ PROCEDURE var ';' (VAR var (',' var)* ';' S] S
+    S -> (var ':=' E) | CALL var ';' | BEGIN (S ';')+ END | ...
+    T -> F ( ( '*' | '/' ) F)*
+    E -> [ '+' | '-' ] T ([ '+' | '-' ] T)*
+    F -> var | const | '(' E ')'
+    Those are respectively:
+    Axiom, statement block, statement, term, expressions, factor
+    Note: the dots in the S production refers to the constructs of
+    the language such as if, while, for, that for brevity were omitted.
+"""
 
 import ir
 from logger import logger
@@ -10,10 +24,10 @@ from functools import reduce
 class Parser:
     def __init__(self, the_lexer):
         self.sym = None
-        self.value = None  # name of the token
+        self.value = None                   # name of the token
         self.new_sym = None
         self.new_value = None
-        self.the_lexer = the_lexer.tokens()  # generator of new symbols
+        self.the_lexer = the_lexer.tokens() # generator of new symbols
 
     def getsym(self):
         """Update sym"""
@@ -29,6 +43,9 @@ class Parser:
     def error(self, msg):
         print("\033[31m", msg, self.new_sym, self.new_value, "\033[39m")
 
+    # functions used to consume symbols: accept, expect
+
+    # accepts any symbol passed as parameter
     def accept(self, s):
         print("accepting", s, "==", self.new_sym)
         return self.getsym() if self.new_sym == s else 0
@@ -41,6 +58,8 @@ class Parser:
         self.error("expect: unexpected symbol")
         return 0
 
+    # function needed to access the right element in case
+    # the variable we're working with belongs to an array
     def array_offset(self, symtab):
         target = symtab.find(self.value)
         offset = None
@@ -53,6 +72,7 @@ class Parser:
             offset = self.linearize_multid_vector(idxes, target, symtab)
         return offset
 
+    # wtf complex stuff
     @staticmethod
     def linearize_multid_vector(explist, target, symtab):
         offset = None
@@ -73,11 +93,15 @@ class Parser:
                 offset = ir.BinExpr(children=["plus", offset, planed], symtab=symtab)
         return offset
 
-    # used to parse expressions
-    # a factor can be either a variable, a constant, or a parenthesized expression
+    # here we start with grammar productions:
+
+    """
+    This production is used to parse factors (F):
+    F -> var | const | ( E ) | inc var
+    F is a factor, which can be either a variable, a constant or a parenthesized expression
+    """
     @logger
     def factor(self, symtab):
-        """F -> var | const | ( E ) | inc var"""
         if self.accept("ident"):
             var = symtab.find(self.value)
             offs = self.array_offset(symtab)
@@ -88,22 +112,19 @@ class Parser:
         if self.accept("number"):
             return ir.Const(value=int(self.value), symtab=symtab)
 
+        """
+        inc operator related code
+        """
         if self.accept("inc"):
             self.expect("ident")
-            var = symtab.find(self.value)
-            try:
-                offs = self.array_offset(symtab)
-            except AttributeError:
-                return ir.AssignStat(
-                target=ir.Var(var=var, symtab=symtab),
-                expr=ir.BinExpr(children=["plus", var, ir.Const(value=1, symtab=symtab)], symtab=symtab),
-                symtab=symtab,
-            )    
-
+            var = self.factor(symtab.find(self.value))
             return ir.AssignStat(
                 target=var,
-                offset=offs,
-                expr=ir.BinExpr(children=["plus", var, ir.Const(value=1, symtab=symtab)], symtab=symtab),
+                expr=ir.BinExpr(
+                    children=["plus", var, ir.Const(
+                        value=1, symtab=symtab
+                    )], symtab=symtab
+                ),
                 symtab=symtab,
             )
 
@@ -115,7 +136,11 @@ class Parser:
             self.error("factor: syntax error")
             self.getsym()
 
-    # each term is a sequence of factors separated by times/slash
+    """
+    This production is used to parse terms (T):
+    T -> F ( ( '*' | '/' ) F)*
+    T is a term, each term is a sequence of F separated by times/slash
+    """
     @logger
     def term(self, symtab):
         expr = self.factor(symtab)
@@ -126,7 +151,11 @@ class Parser:
             expr = ir.BinExpr(children=[op, expr, expr2], symtab=symtab)
         return expr
 
-    # an expr can be composed by many terms separated by plus/minus
+    """
+    This production is used to parse expressions (E):
+    E -> [ '+' | '-' ] T ([ '+' | '-' ] T)*
+    an expr can be composed by many terms separated by plus/minus
+    """
     @logger
     def expression(self, symtab):
         op = None
@@ -146,7 +175,7 @@ class Parser:
 
     @logger
     def condition(self, symtab):
-        # if odd symbol -> unary expression
+        # if #symbols == odd: then unary expr; else: binary expr
         if self.accept("oddsym"):
             return ir.UnExpr(children=["odd", self.expression(symtab)], symtab=symtab)
         else:
@@ -161,14 +190,18 @@ class Parser:
                 self.error("condition: invalid operator")
                 self.getsym()
 
+    """
+    Statement production:
+    S -> 
+    """
     @logger
     def statement(self, symtab):
         # assignment operation
         if self.accept("ident"):
-            target = symtab.find(self.value)  # memory area
+            target = symtab.find(self.value)    # memory area
             offset = self.array_offset(symtab)  # in case it's an array element
-            self.expect("becomes")
-            expr = self.expression(symtab)  # expression to assign (value)
+            self.expect("becomes")              # := symbol, assignment operation
+            expr = self.expression(symtab)      # expression to assign (value)
             return ir.AssignStat(target=target, offset=offset, expr=expr, symtab=symtab)
 
         elif self.accept("callsym"):
@@ -185,6 +218,7 @@ class Parser:
             self.expect("endsym")
             statement_list.print_content()
             return statement_list
+        
         # if-elif-else construct
         elif self.accept("ifsym"):
             cond = self.condition(symtab)
@@ -194,12 +228,14 @@ class Parser:
             if self.accept("elsesym"):
                 els = self.statement(symtab)
             return ir.IfStat(cond=cond, thenpart=then, elsepart=els, symtab=symtab)
+        
         # while loop
         elif self.accept("whilesym"):
             cond = self.condition(symtab)
             self.expect("dosym")
             body = self.statement(symtab)
             return ir.WhileStat(cond=cond, body=body, symtab=symtab)
+        
         # for loop
         # sybtax: for INIT COND STEP do BODY done
         # where INIT, COND, STEP are respectively:
@@ -233,6 +269,9 @@ class Parser:
                 symtab=symtab,
             )
 
+    """
+    Production to derive statement blocks:
+    """
     @logger
     def block(self, symtab, alloct="auto"):
         local_vars = ir.SymbolTable()
@@ -300,9 +339,12 @@ class Parser:
         else:
             symtab.append(ir.Symbol(name, type, alloct=alloct))
 
+    """
+    Axiom production (S):
+    A -> B '.'
+    """
     @logger
     def program(self):
-        """Axiom"""
         global_symtab = ir.SymbolTable()
         self.getsym()
         the_program = self.block(global_symtab, "global")

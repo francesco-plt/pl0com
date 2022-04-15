@@ -6,7 +6,7 @@
     Grammar:
     A -> B '.'
     B -> [ VAR var (',' var)*) ';' ] | [ PROCEDURE var ';' (VAR var (',' var)* ';' S] S
-    S -> (var ':=' E) | CALL var ';' | BEGIN (S ';')+ END | ...
+    S -> (var ':=' E) | CALL var ';' | BEGIN (S ';')* END | ...
     T -> F ( ( '*' | '/' ) F)*
     E -> [ '+' | '-' ] T ([ '+' | '-' ] T)*
     F -> var | const | '(' E ')'
@@ -106,27 +106,21 @@ class Parser:
             var = symtab.find(self.value)
             offs = self.array_offset(symtab)
             if offs is None:
-                return ir.Var(var=var, symtab=symtab)
+                if self.accept("inc"):
+                    return ir.IncExprPostfix(var=var, symtab=symtab)
+                    # return ir.AssignStat(
+                    #     target=var,
+                    #     expr=ir.BinExpr(
+                    #         children=["plus", var, ir.Const(value=1, symtab=symtab)], symtab=symtab
+                    #     ),
+                    #     symtab=symtab,
+                    # )
+                else:
+                    return ir.Var(var=var, symtab=symtab)
             else:
                 return ir.ArrayElement(var=var, offset=offs, symtab=symtab)
         if self.accept("number"):
             return ir.Const(value=int(self.value), symtab=symtab)
-
-        """
-        inc operator related code
-        """
-        if self.accept("inc"):
-            self.expect("ident")
-            var = self.factor(symtab.find(self.value))
-            return ir.AssignStat(
-                target=var,
-                expr=ir.BinExpr(
-                    children=["plus", var, ir.Const(
-                        value=1, symtab=symtab
-                    )], symtab=symtab
-                ),
-                symtab=symtab,
-            )
 
         elif self.accept("lparen"):
             expr = self.expression()
@@ -192,7 +186,7 @@ class Parser:
 
     """
     Statement production:
-    S -> 
+    S -> (var ':=' E) | CALL var ';' | BEGIN (S ';')* END | ...
     """
     @logger
     def statement(self, symtab):

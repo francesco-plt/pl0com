@@ -1,7 +1,10 @@
 VAR x;
 BEGIN
-   x := -1;   
-   read x;
-    x++;
-   !x
-END. 
+    x := 1;
+    WHILE x <= 10 DO
+    BEGIN
+        print x;
+        {x := x + 1}
+        x++
+    END
+END.

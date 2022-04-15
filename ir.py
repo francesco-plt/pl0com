@@ -458,6 +458,44 @@ class CallExpr(Expr):
             self.children = []
 
 
+class IncExprPostfix(IRNode):
+    def __init__(self, parent=None, var=None, op=None, symtab=None):
+        super().__init__(parent, [], symtab)
+        self.symbol = var
+        self.op = op
+        print("[OPERATOR]: ", op)
+        # no idea what this does, copied from AssignStat(Stat)
+        try:
+            self.symbol.parent = self
+        except AttributeError:
+            pass
+
+    def collect_uses(self):
+        return [self.symbol]
+
+    def collect_kills(self):
+        return [self.symbol]
+
+
+    def lower(self):
+        statements = []
+        
+        new_ld_d = new_temporary(self.symtab, self.symbol.stype)
+        statements += [LoadStat(dest=new_ld_d, symbol=self.symbol, symtab=self.symtab)]
+        
+        new_li1_d = new_temporary(self.symtab, self.symbol.stype)
+        statements += [LoadImmStat(dest=new_li1_d, val=1, symtab=self.symtab)]
+        
+        new_inc_d = new_temporary(self.symtab, self.symbol.stype)
+        statements += [BinStat(dest=new_inc_d, op='plus', srca=new_ld_d, srcb=new_li1_d, symtab=self.symtab)]
+        
+        statements += [StoreStat(dest=self.symbol, symbol=new_inc_d, symtab=self.symtab)]
+        
+        statements += [DestRedirectStat(self.parent, dest=new_ld_d, symtab=self.symtab)]
+        
+        return self.parent.replace(self, StatList(children=statements, symtab=self.symtab))
+
+
 # STATEMENTS
 
 

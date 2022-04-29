@@ -458,7 +458,8 @@ class CallExpr(Expr):
             self.children = []
 
 
-class IncExprPostfix(IRNode):
+class IncOp(IRNode):
+    # up until lower this is straight copypaste from AssignStat
     def __init__(self, parent=None, var=None, op=None, symtab=None):
         super().__init__(parent, [], symtab)
         self.symbol = var
@@ -480,18 +481,20 @@ class IncExprPostfix(IRNode):
     def lower(self):
         statements = []
         
-        new_ld_d = new_temporary(self.symtab, self.symbol.stype)
-        statements += [LoadStat(dest=new_ld_d, symbol=self.symbol, symtab=self.symtab)]
+        # loading the value of the variable we're working with in memory
+        load_var = new_temporary(self.symtab, self.symbol.stype)
+        statements += [LoadStat(dest=load_var, symbol=self.symbol, symtab=self.symtab)]
         
-        new_li1_d = new_temporary(self.symtab, self.symbol.stype)
-        statements += [LoadImmStat(dest=new_li1_d, val=1, symtab=self.symtab)]
+        # loading 1 (to be summed to the var) in memory
+        load_one_imm = new_temporary(self.symtab, self.symbol.stype)
+        statements += [LoadImmStat(dest=load_one_imm, val=1, symtab=self.symtab)]
         
-        new_inc_d = new_temporary(self.symtab, self.symbol.stype)
-        statements += [BinStat(dest=new_inc_d, op='plus', srca=new_ld_d, srcb=new_li1_d, symtab=self.symtab)]
+        # summing up the two (var + 1)
+        inc_var = new_temporary(self.symtab, self.symbol.stype)
+        statements += [BinStat(dest=inc_var, op='plus', srca=load_var, srcb=load_one_imm, symtab=self.symtab)]
         
-        statements += [StoreStat(dest=self.symbol, symbol=new_inc_d, symtab=self.symtab)]
-        
-        statements += [DestRedirectStat(self.parent, dest=new_ld_d, symtab=self.symtab)]
+        # and storing back the result
+        statements += [StoreStat(dest=self.symbol, symbol=inc_var, symtab=self.symtab)]
         
         return self.parent.replace(self, StatList(children=statements, symtab=self.symtab))
 

@@ -102,26 +102,23 @@ class Parser:
     """
     @logger
     def factor(self, symtab):
+        # identifier case, i.e. variable
         if self.accept("ident"):
+            # we check that the var was declared before use
+            # (present in symbol table)
+            # symbol table: represents currently
+            # accessible scope
             var = symtab.find(self.value)
             offs = self.array_offset(symtab)
             if offs is None:
-                if self.accept("inc"):
-                    return ir.IncExprPostfix(var=var, symtab=symtab)
-                    # return ir.AssignStat(
-                    #     target=var,
-                    #     expr=ir.BinExpr(
-                    #         children=["plus", var, ir.Const(value=1, symtab=symtab)], symtab=symtab
-                    #     ),
-                    #     symtab=symtab,
-                    # )
+                if self.accept('increment'):
+                    return ir.IncOp(var=var, symtab=symtab)
                 else:
                     return ir.Var(var=var, symtab=symtab)
             else:
                 return ir.ArrayElement(var=var, offset=offs, symtab=symtab)
         if self.accept("number"):
             return ir.Const(value=int(self.value), symtab=symtab)
-
         elif self.accept("lparen"):
             expr = self.expression()
             self.expect("rparen")
@@ -200,6 +197,8 @@ class Parser:
 
         elif self.accept("callsym"):
             self.expect("ident")
+            # accettare i parametri e salvarli
+            # a callexpr va aggiunto un modo per accettare una lista di parametri
             return ir.CallStat(
                 call_expr=ir.CallExpr(function=symtab.find(self.value), symtab=symtab),
                 symtab=symtab,
@@ -283,6 +282,9 @@ class Parser:
             self.expect("semicolon")
 
         while self.accept("procsym"):
+            # funzione per aggiungere parametri formali
+            # cioè i nomi usati per identificare i parametri della
+            # funzione chiamata -> simboli da inserire nella symbol table
             self.expect("ident")
             fname = self.value
             self.expect("semicolon")

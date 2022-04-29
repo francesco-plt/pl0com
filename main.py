@@ -10,6 +10,9 @@ from cfg import *
 from regalloc import *
 from codegen import *
 
+# reducing headcaches while debugging
+import colored_traceback
+colored_traceback.add_hook()
 
 def compile_program(text):
     lex = lexer.Lexer(text)

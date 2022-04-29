@@ -1,3 +1,4 @@
+{test comment}
 VAR x;
 BEGIN
     x := 1;

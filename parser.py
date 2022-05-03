@@ -5,11 +5,12 @@
 
     Grammar:
     A -> B '.'
-    B -> [ VAR var (',' var)*) ';' ] | [ PROCEDURE var ';' (VAR var (',' var)* ';' S] S
-    S -> (var ':=' E) | CALL var ';' | BEGIN (S ';')* END | ...
+    B -> [ VAR var (',' var)*) ';' ] |
+        [ PROCEDURE [ '(' VAR var (',' VAR var)* ';')* ')'] var ';' (VAR var (',' var)* ';' S] S
+    S -> (var ':=' E) | CALL procname ';' | BEGIN (S ';')* END | ...
     T -> F ( ( '*' | '/' ) F)*
     E -> [ '+' | '-' ] T ([ '+' | '-' ] T)*
-    F -> var | const | '(' E ')'
+    F -> var | const | '(' E ')' | var inc
     Those are respectively:
     Axiom, statement block, statement, term, expressions, factor
     Note: the dots in the S production refers to the constructs of
@@ -97,17 +98,15 @@ class Parser:
 
     """
     This production is used to parse factors (F):
-    F -> var | const | ( E ) | inc var
-    F is a factor, which can be either a variable, a constant or a parenthesized expression
+    F -> var | const | ( E ) | var inc
+    F is a factor, which can be either a variable, a constant (integer?) or a parenthesized expression
     """
     @logger
     def factor(self, symtab):
         # identifier case, i.e. variable
         if self.accept("ident"):
-            # we check that the var was declared before use
-            # (present in symbol table)
-            # symbol table: represents currently
-            # accessible scope
+            # we check that the var was declared before use (present in symbol table)
+            # symbol table: represents currently accessible scope != global symbol table
             var = symtab.find(self.value)
             offs = self.array_offset(symtab)
             if offs is None:
@@ -183,7 +182,8 @@ class Parser:
 
     """
     Statement production:
-    S -> (var ':=' E) | CALL var ';' | BEGIN (S ';')* END | ...
+    S -> (var ':=' E) | CALL procname ';' | BEGIN (S ';')* END | ...
+    note that variables and function names are both of type ident
     """
     @logger
     def statement(self, symtab):
@@ -195,12 +195,32 @@ class Parser:
             expr = self.expression(symtab)      # expression to assign (value)
             return ir.AssignStat(target=target, offset=offset, expr=expr, symtab=symtab)
 
+        # procedure call
         elif self.accept("callsym"):
             self.expect("ident")
-            # accettare i parametri e salvarli
-            # a callexpr va aggiunto un modo per accettare una lista di parametri
+            # if there are parameters we need
+            # to pass them to the called procedure
+            if self.accept("lparen"):
+                # parameter list
+                parameters = []
+                while self.accept("ident"):
+                    while self.accept("comma"):
+                        self.accept("ident") # ?
+                self.expect("rparen")
+                return ir.CallStat(
+                    call_expr=ir.CallExpr(
+                        function=symtab.find(self.value),
+                        symtab=symtab,
+                        parameters=parameters
+                        ),
+                    symtab=symtab,
+                )
             return ir.CallStat(
-                call_expr=ir.CallExpr(function=symtab.find(self.value), symtab=symtab),
+                call_expr=ir.CallExpr(
+                    function=symtab.find(self.value),
+                    symtab=symtab,
+                    parameters=None
+                    ),
                 symtab=symtab,
             )
         elif self.accept("beginsym"):
@@ -261,12 +281,19 @@ class Parser:
                 expr=ir.ReadStat(symtab=symtab),
                 symtab=symtab,
             )
+        # no idea what tf should I do here
+        elif self.accept("return"):
+            return ir.ReturnStat(symtab=symtab) # return nothing
 
     """
     Production to derive statement blocks:
+    B -> [ VAR var (',' var)*) ';' ] |
+        [ PROCEDURE [ '(' VAR var (',' VAR var)* ';')* ')'] var ';' (VAR var (',' var)* ';' S] S
+    note that here instead of var we can also have const
     """
     @logger
     def block(self, symtab, alloct="auto"):
+        parameters = ir.SymbolTable()
         local_vars = ir.SymbolTable()
         defs = ir.DefinitionList()
 
@@ -282,9 +309,17 @@ class Parser:
             self.expect("semicolon")
 
         while self.accept("procsym"):
-            # funzione per aggiungere parametri formali
-            # cioè i nomi usati per identificare i parametri della
-            # funzione chiamata -> simboli da inserire nella symbol table
+            
+            # procedure parameters parsing. grammar production:
+            # procedure [ '(' VAR var (',' VAR var)* ';')* ')']
+            if self.accept("lparen"):
+                while self.accept("varsym"):
+                    self.vardef(parameters, alloct)
+                    while self.accept("comma"):
+                        self.vardef(parameters, alloct)
+                    self.expect("semicolon")
+                self.expect("rparen")
+
             self.expect("ident")
             fname = self.value
             self.expect("semicolon")

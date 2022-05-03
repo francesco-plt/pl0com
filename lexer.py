@@ -42,6 +42,8 @@ TOKEN_DEFS = {
     "donesym": ["done"],
     # inc op token
     "inc": ["++"]
+    # return value token
+    "return": ["PARS"],
 }
 
 

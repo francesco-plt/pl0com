@@ -10,6 +10,8 @@ from codegenhelp import *
 
 # UTILITIES
 
+# as the same may suggest, count how many
+# temporaries have been instantiated so far
 tempcount = 0
 
 
@@ -115,12 +117,15 @@ TYPENAMES = {
 ALLOC_CLASSES = ["global", "auto", "reg", "imm"]
 
 
+# SYMBOL ALLOCATION
 class Symbol:
-    """There are 4 classes of allocation for symbols:\n
-    - allocation to a register ('reg')
-    - allocation to an arbitrary memory location, in the current stack frame
-      ('auto') or in the data section ('global')
-    - allocation to an immediate ('imm')"""
+    """
+        4 classes of allocation for symbols:
+        1. reg: allocation to a register
+        2. auto: allocation to an arbitrary memory location in the current stack frame
+        3. global: allocation to an arbitrary memory location in the data section
+        4. imm: allocation to an immediate
+    """
 
     def __init__(self, name, stype, value=None, alloct="auto"):
         self.name = name
@@ -145,7 +150,10 @@ class Symbol:
             base = base + "; " + repr(self.allocinfo)
         return base
 
-
+# SYMBOL TABLE
+# data structure created used to store about
+# the occurrence of various entities such as
+# variable names
 class SymbolTable(list):
     def find(self, name):
         print("Looking up", name)
@@ -166,8 +174,7 @@ class SymbolTable(list):
 
 
 # IRNODE
-
-
+# structure of a generic IR node
 class IRNode:  # abstract
     def __init__(self, parent=None, children=None, symtab=None):
         self.parent = parent
@@ -315,7 +322,6 @@ class IRNode:  # abstract
 
 
 # CONST and VAR
-
 
 class Const(IRNode):
     def __init__(self, parent=None, value=0, symb=None, symtab=None):

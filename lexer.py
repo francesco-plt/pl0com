@@ -41,9 +41,9 @@ TOKEN_DEFS = {
     "forsym": ["for"],
     "donesym": ["done"],
     # inc op token
-    "inc": ["++"]
+    "inc": ["++"],
     # return value token
-    "return": ["PARS"],
+    "retsym": ["return"]
 }
 
 

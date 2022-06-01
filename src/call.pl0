@@ -1,0 +1,15 @@
+VAR x, squ;
+
+PROCEDURE square(y)
+VAR y;
+BEGIN
+   y := y * y;
+   return y
+END
+ 
+BEGIN
+   x := -1;
+   !x;
+   x := CALL square(x);
+   !x
+END.

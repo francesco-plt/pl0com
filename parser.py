@@ -110,18 +110,39 @@ class Parser:
             var = symtab.find(self.value)
             offs = self.array_offset(symtab)
             if offs is None:
-                if self.accept('increment'):
-                    return ir.IncOp(var=var, symtab=symtab)
+                if self.accept('inc'):
+                    print("DEBUG: inc operator parsed")
+                    return ir.IncExpr(var=var, symtab=symtab)
                 else:
                     return ir.Var(var=var, symtab=symtab)
             else:
                 return ir.ArrayElement(var=var, offset=offs, symtab=symtab)
-        if self.accept("number"):
+        elif self.accept("number"):
             return ir.Const(value=int(self.value), symtab=symtab)
         elif self.accept("lparen"):
             expr = self.expression()
             self.expect("rparen")
             return expr
+        elif self.accept("callsym"):
+            self.expect("ident")
+            func = symtab.find(self.value)
+            npar = func.npar
+            # if there are parameters, parse them
+            if self.accept("lparen"):
+                parameters = []
+                newexpr  = parameters.append(self.expression(symtab))
+                while newexpr != None:
+                    while self.accept("comma"):
+                        parameters.append(self.expression(symtab))
+                self.expect("rparen")
+                return ir.CallStat(
+                    call_expr=ir.CallExpr(
+                        function=func,
+                        symtab=symtab,
+                        parameters=parameters
+                        ),
+                    symtab=symtab,
+                )
         else:
             self.error("factor: syntax error")
             self.getsym()
@@ -182,7 +203,7 @@ class Parser:
 
     """
     Statement production:
-    S -> (var ':=' E) | CALL procname ';' | BEGIN (S ';')* END | ...
+    S -> (var ':=' E) | CALL procname ['(' expr [ (',' expr )+ ] ')'] ';' | BEGIN (S ';')* END | ...
     note that variables and function names are both of type ident
     """
     @logger
@@ -198,23 +219,25 @@ class Parser:
         # procedure call
         elif self.accept("callsym"):
             self.expect("ident")
-            # if there are parameters we need
-            # to pass them to the called procedure
+            func = symtab.find(self.value)
+            npar = func.npar
+            # if there are parameters, parse them
             if self.accept("lparen"):
-                # parameter list
                 parameters = []
-                while self.accept("ident"):
+                newexpr  = parameters.append(self.expression(symtab))
+                while newexpr != None:
                     while self.accept("comma"):
-                        self.accept("ident") # ?
+                        parameters.append(self.expression(symtab))
                 self.expect("rparen")
                 return ir.CallStat(
                     call_expr=ir.CallExpr(
-                        function=symtab.find(self.value),
+                        function=func,
                         symtab=symtab,
                         parameters=parameters
                         ),
                     symtab=symtab,
                 )
+            # otherwise, just call the procedure
             return ir.CallStat(
                 call_expr=ir.CallExpr(
                     function=symtab.find(self.value),
@@ -281,9 +304,11 @@ class Parser:
                 expr=ir.ReadStat(symtab=symtab),
                 symtab=symtab,
             )
-        # no idea what tf should I do here
-        elif self.accept("return"):
-            return ir.ReturnStat(symtab=symtab) # return nothing
+        elif self.accept('retsym'):
+            exp = self.expression(symtab)
+            return ir.ReturnStat(exp=exp, symtab=symtab)
+        else:
+            return ir.EmptyStat()
 
     """
     Production to derive statement blocks:
@@ -297,38 +322,47 @@ class Parser:
         local_vars = ir.SymbolTable()
         defs = ir.DefinitionList()
 
-        while self.accept("constsym") or self.accept("varsym"):
-            if self.sym == "constsym":
+        while self.accept('constsym') or self.accept('varsym') or self.accept('paramsym'):
+            if self.sym == 'constsym':
                 self.constdef(local_vars, alloct)
-                while self.accept("comma"):
+                while self.accept('comma'):
                     self.constdef(local_vars, alloct)
-            else:
+            elif self.sym == 'varsym':
                 self.vardef(local_vars, alloct)
-                while self.accept("comma"):
+                while self.accept('comma'):
                     self.vardef(local_vars, alloct)
-            self.expect("semicolon")
+            elif self.sym == 'paramsym':
+                self.vardef(local_parameters, alloct='param') # will become 'param'
+                while self.accept('comma'):
+                    self.vardef(local_parameters, alloct='param')
+            else:
+                print("[FATAL] parsing error: unexpected token ", self.sym)
+                exit(1)
+            self.expect('semicolon')
+        
+        ret_sym = ir.Symbol("return", ir.TYPENAMES['int'], alloct='param')
+        local_vars.append(ret_sym)
 
         while self.accept("procsym"):
-            
             # procedure parameters parsing. grammar production:
             # procedure [ '(' VAR var (',' VAR var)* ';')* ')']
-            if self.accept("lparen"):
-                while self.accept("varsym"):
-                    self.vardef(parameters, alloct)
-                    while self.accept("comma"):
-                        self.vardef(parameters, alloct)
-                    self.expect("semicolon")
-                self.expect("rparen")
-
             self.expect("ident")
             fname = self.value
-            self.expect("semicolon")
-            local_vars.append(ir.Symbol(fname, ir.TYPENAMES["function"]))
+            count = 0
+            if self.accept("lparen"):
+                self.vardef(parameters, alloct)
+                count += 1
+                while self.accept("comma"):
+                    self.vardef(parameters, alloct)
+                    count += 1
+            self.expect("rparen")
+            # self.expect("semicolon")
+            local_vars.append(ir.Symbol(fname, ir.TYPENAMES["function"], npar=count))
+            print(f"DEBUG: function {fname} with {count} parameters")
             fbody = self.block(local_vars)
-            self.expect("semicolon")
             defs.append(ir.FunctionDef(symbol=local_vars.find(fname), body=fbody))
         stat = self.statement(ir.SymbolTable(symtab[:] + local_vars))
-        return ir.Block(gl_sym=symtab, lc_sym=local_vars, defs=defs, body=stat)
+        return ir.Block(gl_sym=symtab, lc_sym=local_vars + parameters, defs=defs, body=stat)
 
     @logger
     def constdef(self, local_vars, alloct="auto"):

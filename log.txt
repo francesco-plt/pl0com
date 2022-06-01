@@ -1,0 +1,959 @@
+['main.py', 'src/call.pl0', 'obj/call.s']
+start <function Parser.program at 0xffffb964fee0>
+getsym: varsym var
+start <function Parser.block at 0xffffb964fb80>
+accepting constsym == varsym
+accepting varsym == varsym
+getsym: ident x
+start <function Parser.vardef at 0xffffb964fdc0>
+expecting ident
+accepting ident == ident
+getsym: comma ,
+accepting lspar == comma
+accepting colon == comma
+end <function Parser.vardef at 0xffffb964fdc0>
+accepting comma == comma
+getsym: ident squ
+start <function Parser.vardef at 0xffffb964fdc0>
+expecting ident
+accepting ident == ident
+getsym: semicolon ;
+accepting lspar == semicolon
+accepting colon == semicolon
+end <function Parser.vardef at 0xffffb964fdc0>
+accepting comma == semicolon
+expecting semicolon
+accepting semicolon == semicolon
+getsym: procsym procedure
+accepting constsym == procsym
+accepting varsym == procsym
+accepting paramsym == procsym
+accepting procsym == procsym
+getsym: ident square
+expecting ident
+accepting ident == ident
+getsym: lparen (
+accepting lparen == lparen
+getsym: ident y
+start <function Parser.vardef at 0xffffb964fdc0>
+expecting ident
+accepting ident == ident
+getsym: rparen )
+accepting lspar == rparen
+accepting colon == rparen
+end <function Parser.vardef at 0xffffb964fdc0>
+accepting comma == rparen
+expecting rparen
+accepting rparen == rparen
+getsym: varsym var
+DEBUG: function square with 1 parameters
+start <function Parser.block at 0xffffb964fb80>
+accepting constsym == varsym
+accepting varsym == varsym
+getsym: ident y
+start <function Parser.vardef at 0xffffb964fdc0>
+expecting ident
+accepting ident == ident
+getsym: semicolon ;
+accepting lspar == semicolon
+accepting colon == semicolon
+end <function Parser.vardef at 0xffffb964fdc0>
+accepting comma == semicolon
+expecting semicolon
+accepting semicolon == semicolon
+getsym: beginsym begin
+accepting constsym == beginsym
+accepting varsym == beginsym
+accepting paramsym == beginsym
+accepting procsym == beginsym
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == beginsym
+accepting callsym == beginsym
+accepting beginsym == beginsym
+getsym: ident y
+StatList : new 281473792177440
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == ident
+getsym: becomes :=
+Looking up y
+Looking up y
+expecting becomes
+accepting becomes == becomes
+getsym: ident y
+start <function Parser.expression at 0xffffb964f820>
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == ident
+getsym: times *
+Looking up y
+Looking up y
+accepting inc == times
+end <function Parser.factor at 0xffffb964f5e0>
+getsym: ident y
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == ident
+getsym: semicolon ;
+Looking up y
+Looking up y
+accepting inc == semicolon
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+end <function Parser.statement at 0xffffb964fa60>
+StatList: appending 281473791872592 of type <class 'ir.AssignStat'> to 281473792177440
+accepting semicolon == semicolon
+getsym: retsym return
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == retsym
+accepting callsym == retsym
+accepting beginsym == retsym
+accepting ifsym == retsym
+accepting whilesym == retsym
+accepting forsym == retsym
+accepting print == retsym
+accepting read == retsym
+accepting retsym == retsym
+getsym: ident y
+start <function Parser.expression at 0xffffb964f820>
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == ident
+getsym: endsym end
+Looking up y
+Looking up y
+accepting inc == endsym
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+end <function Parser.statement at 0xffffb964fa60>
+StatList: appending 281473791872736 of type <class 'ir.ReturnStat'> to 281473792177440
+accepting semicolon == endsym
+expecting endsym
+accepting endsym == endsym
+getsym: beginsym begin
+StatList 281473792177440 : [ 281473791872592 281473791872736 ]
+end <function Parser.statement at 0xffffb964fa60>
+end <function Parser.block at 0xffffb964fb80>
+Looking up square
+accepting procsym == beginsym
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == beginsym
+accepting callsym == beginsym
+accepting beginsym == beginsym
+getsym: ident x
+StatList : new 281473791872928
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == ident
+getsym: becomes :=
+Looking up x
+Looking up x
+expecting becomes
+accepting becomes == becomes
+getsym: minus -
+start <function Parser.expression at 0xffffb964f820>
+getsym: number 1
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == number
+accepting number == number
+getsym: semicolon ;
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+end <function Parser.statement at 0xffffb964fa60>
+StatList: appending 281473791930624 of type <class 'ir.AssignStat'> to 281473791872928
+accepting semicolon == semicolon
+getsym: print !
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == print
+accepting callsym == print
+accepting beginsym == print
+accepting ifsym == print
+accepting whilesym == print
+accepting forsym == print
+accepting print == print
+getsym: ident x
+start <function Parser.expression at 0xffffb964f820>
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == ident
+getsym: semicolon ;
+Looking up x
+Looking up x
+accepting inc == semicolon
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+end <function Parser.statement at 0xffffb964fa60>
+StatList: appending 281473791930768 of type <class 'ir.PrintStat'> to 281473791872928
+accepting semicolon == semicolon
+getsym: ident x
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == ident
+getsym: becomes :=
+Looking up x
+Looking up x
+expecting becomes
+accepting becomes == becomes
+getsym: callsym call
+start <function Parser.expression at 0xffffb964f820>
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == callsym
+accepting number == callsym
+accepting lparen == callsym
+accepting callsym == callsym
+getsym: ident square
+expecting ident
+accepting ident == ident
+getsym: lparen (
+Looking up square
+accepting lparen == lparen
+getsym: ident x
+start <function Parser.expression at 0xffffb964f820>
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == ident
+getsym: rparen )
+Looking up x
+Looking up x
+accepting inc == rparen
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+expecting rparen
+accepting rparen == rparen
+getsym: semicolon ;
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+end <function Parser.statement at 0xffffb964fa60>
+StatList: appending 281473791931152 of type <class 'ir.AssignStat'> to 281473791872928
+accepting semicolon == semicolon
+getsym: print !
+start <function Parser.statement at 0xffffb964fa60>
+accepting ident == print
+accepting callsym == print
+accepting beginsym == print
+accepting ifsym == print
+accepting whilesym == print
+accepting forsym == print
+accepting print == print
+getsym: ident x
+start <function Parser.expression at 0xffffb964f820>
+start <function Parser.term at 0xffffb964f700>
+start <function Parser.factor at 0xffffb964f5e0>
+accepting ident == ident
+getsym: endsym end
+Looking up x
+Looking up x
+accepting inc == endsym
+end <function Parser.factor at 0xffffb964f5e0>
+end <function Parser.term at 0xffffb964f700>
+end <function Parser.expression at 0xffffb964f820>
+end <function Parser.statement at 0xffffb964fa60>
+StatList: appending 281473791931296 of type <class 'ir.PrintStat'> to 281473791872928
+accepting semicolon == endsym
+expecting endsym
+accepting endsym == endsym
+getsym: period .
+StatList 281473791872928 : [ 281473791930624 281473791930768 281473791931152 281473791931296 ]
+end <function Parser.statement at 0xffffb964fa60>
+end <function Parser.block at 0xffffb964fb80>
+expecting period
+accepting period == period
+end <function Parser.program at 0xffffb964fee0>
+
+ <class 'ir.Block'> 281473791931440 {
+                                                                      <<<<<----- BUG? MISSING PARENT
+	global_symtab: 	SymbolTable:
+	
+	defs: 	<class 'ir.DefinitionList'> 281473792137584 {
+	parent = 281473791931440
+		children:
+		<class 'ir.FunctionDef'> 281473791872832 {
+		parent = 281473792137584
+			body: 	<class 'ir.Block'> 281473791872784 {
+			parent = 281473791872832
+				global_symtab: 	SymbolTable:
+				global int x
+				global int squ
+				param int return
+				auto function square
+				
+				defs: 	<class 'ir.DefinitionList'> 281473792177392 {
+				parent = 281473791872784
+				}
+				body: 	<class 'ir.StatList'> 281473792177440 {
+				parent = 281473791872784
+					children:
+					<class 'ir.AssignStat'> 281473791872592 {
+					parent = 281473792177440
+						expr: 	<class 'ir.BinExpr'> 281473791872496 {
+						parent = 281473791872592
+							children:
+							'times'
+							<class 'ir.Var'> 281473791872304 {
+							parent = 281473791872496
+								symbol: 	auto int y
+							}
+							<class 'ir.Var'> 281473791872400 {
+							parent = 281473791872496
+								symbol: 	auto int y
+							}
+						}
+						offset: 	None
+						symbol: 	auto int y
+					}
+					<class 'ir.ReturnStat'> 281473791872736 {
+					parent = 281473792177440
+						expr: 	<class 'ir.Var'> 281473791872640 {
+						parent = 281473791872736
+							symbol: 	auto int y
+						}
+					}
+				}
+			}
+			symbol: 	auto function square
+		}
+	}
+	body: 	<class 'ir.StatList'> 281473791872928 {
+	parent = 281473791931440
+		children:
+		<class 'ir.AssignStat'> 281473791930624 {
+		parent = 281473791872928
+			expr: 	<class 'ir.UnExpr'> 281473791930528 {
+			parent = 281473791930624
+				children:
+				'minus'
+				<class 'ir.Const'> 281473791930432 {
+				parent = 281473791930528
+					value: 	1
+					symbol: 	None
+				}
+			}
+			offset: 	None
+			symbol: 	global int x
+		}
+		<class 'ir.PrintStat'> 281473791930768 {
+		parent = 281473791872928
+			children:
+			<class 'ir.Var'> 281473791930672 {
+			parent = 281473791930768
+				symbol: 	global int x
+			}
+			expr: 	<class 'ir.Var'> 281473791930672 {
+			parent = 281473791930768
+				symbol: 	global int x
+			}
+		}
+		<class 'ir.AssignStat'> 281473791931152 {
+		parent = 281473791872928
+			expr: 	<class 'ir.CallStat'> 281473791931056 {
+			parent = 281473791931152
+				call: 	<class 'ir.CallExpr'> 281473791930960 {
+				parent = 281473791931056
+					children:
+					<class 'ir.Var'> 281473791930864 {
+					parent = 281473791930960
+						symbol: 	global int x
+					}
+					symbol: 	auto function square
+				}
+			}
+			offset: 	None
+			symbol: 	global int x
+		}
+		<class 'ir.PrintStat'> 281473791931296 {
+		parent = 281473791872928
+			children:
+			<class 'ir.Var'> 281473791931200 {
+			parent = 281473791931296
+				symbol: 	global int x
+			}
+			expr: 	<class 'ir.Var'> 281473791931200 {
+			parent = 281473791931296
+				symbol: 	global int x
+			}
+		}
+	}
+} 
+
+navigating children of <class 'ir.DefinitionList'> 281473792137584 1
+<class 'ir.DefinitionList'> 281473792177392
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791872784
+navigating children of <class 'ir.StatList'> 281473792177440 2
+navigating children of <class 'ir.BinExpr'> 281473791872496 3
+<class 'ir.Var'> 281473791872304
+<class 'ir.Var'> 281473791872400
+<class 'ir.BinExpr'> 281473791872496
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791872592
+<class 'ir.AssignStat'> 281473791872592
+<class 'ir.Var'> 281473791872640
+successfully navigated attr  expr  of <class 'ir.ReturnStat'> 281473791872736
+<class 'ir.ReturnStat'> 281473791872736
+<class 'ir.StatList'> 281473792177440
+StatList 281473792177440 : [ 281473791872592 281473791872736 ]
+successfully navigated attr  body  of <class 'ir.Block'> 281473791872784
+<class 'ir.Block'> 281473791872784
+successfully navigated attr  body  of <class 'ir.FunctionDef'> 281473791872832
+<class 'ir.FunctionDef'> 281473791872832
+<class 'ir.DefinitionList'> 281473792137584
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.StatList'> 281473791872928 4
+navigating children of <class 'ir.UnExpr'> 281473791930528 2
+<class 'ir.Const'> 281473791930432
+<class 'ir.UnExpr'> 281473791930528
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791930624
+<class 'ir.AssignStat'> 281473791930624
+navigating children of <class 'ir.PrintStat'> 281473791930768 1
+<class 'ir.Var'> 281473791930672
+<class 'ir.Var'> 281473791930672
+successfully navigated attr  expr  of <class 'ir.PrintStat'> 281473791930768
+<class 'ir.PrintStat'> 281473791930768
+navigating children of <class 'ir.CallExpr'> 281473791930960 1
+<class 'ir.Var'> 281473791930864
+<class 'ir.CallExpr'> 281473791930960
+successfully navigated attr  call  of <class 'ir.CallStat'> 281473791931056
+<class 'ir.CallStat'> 281473791931056
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791931152
+<class 'ir.AssignStat'> 281473791931152
+navigating children of <class 'ir.PrintStat'> 281473791931296 1
+<class 'ir.Var'> 281473791931200
+<class 'ir.Var'> 281473791931200
+successfully navigated attr  expr  of <class 'ir.PrintStat'> 281473791931296
+<class 'ir.PrintStat'> 281473791931296
+<class 'ir.StatList'> 281473791872928
+StatList 281473791872928 : [ 281473791930624 281473791930768 281473791931152 281473791931296 ]
+successfully navigated attr  body  of <class 'ir.Block'> 281473791931440
+<class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.DefinitionList'> 281473792137584 1
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791872784
+navigating children of <class 'ir.StatList'> 281473792177440 2
+navigating children of <class 'ir.BinExpr'> 281473791872496 3
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791872592
+successfully navigated attr  expr  of <class 'ir.ReturnStat'> 281473791872736
+successfully navigated attr  body  of <class 'ir.Block'> 281473791872784
+successfully navigated attr  body  of <class 'ir.FunctionDef'> 281473791872832
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.StatList'> 281473791872928 4
+navigating children of <class 'ir.UnExpr'> 281473791930528 2
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791930624
+navigating children of <class 'ir.PrintStat'> 281473791930768 1
+successfully navigated attr  expr  of <class 'ir.PrintStat'> 281473791930768
+navigating children of <class 'ir.CallExpr'> 281473791930960 1
+successfully navigated attr  call  of <class 'ir.CallStat'> 281473791931056
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791931152
+navigating children of <class 'ir.PrintStat'> 281473791931296 1
+successfully navigated attr  expr  of <class 'ir.PrintStat'> 281473791931296
+successfully navigated attr  body  of <class 'ir.Block'> 281473791931440
+<class 'ir.DefinitionList'> 281473792177392 -> <class 'ir.Block'> 281473791872784
+<class 'ir.Var'> 281473791872304 -> <class 'ir.BinExpr'> 281473791872496
+<class 'ir.Var'> 281473791872400 -> <class 'ir.BinExpr'> 281473791872496
+<class 'ir.BinExpr'> 281473791872496 -> <class 'ir.AssignStat'> 281473791872592
+<class 'ir.AssignStat'> 281473791872592 -> <class 'ir.StatList'> 281473792177440
+<class 'ir.Var'> 281473791872640 -> <class 'ir.ReturnStat'> 281473791872736
+<class 'ir.ReturnStat'> 281473791872736 -> <class 'ir.StatList'> 281473792177440
+<class 'ir.StatList'> 281473792177440 -> <class 'ir.Block'> 281473791872784
+<class 'ir.Block'> 281473791872784 -> <class 'ir.FunctionDef'> 281473791872832
+<class 'ir.FunctionDef'> 281473791872832 -> <class 'ir.DefinitionList'> 281473792137584
+<class 'ir.DefinitionList'> 281473792137584 -> <class 'ir.Block'> 281473791931440
+<class 'ir.Const'> 281473791930432 -> <class 'ir.UnExpr'> 281473791930528
+<class 'ir.UnExpr'> 281473791930528 -> <class 'ir.AssignStat'> 281473791930624
+<class 'ir.AssignStat'> 281473791930624 -> <class 'ir.StatList'> 281473791872928
+<class 'ir.Var'> 281473791930672 -> <class 'ir.PrintStat'> 281473791930768
+<class 'ir.PrintStat'> 281473791930768 -> <class 'ir.StatList'> 281473791872928
+<class 'ir.Var'> 281473791930864 -> <class 'ir.CallExpr'> 281473791930960
+<class 'ir.CallExpr'> 281473791930960 -> <class 'ir.CallStat'> 281473791931056
+<class 'ir.CallStat'> 281473791931056 -> <class 'ir.AssignStat'> 281473791931152
+<class 'ir.AssignStat'> 281473791931152 -> <class 'ir.StatList'> 281473791872928
+<class 'ir.Var'> 281473791931200 -> <class 'ir.PrintStat'> 281473791931296
+<class 'ir.PrintStat'> 281473791931296 -> <class 'ir.StatList'> 281473791872928
+<class 'ir.StatList'> 281473791872928 -> <class 'ir.Block'> 281473791931440
+<class 'ir.Block'> 281473791931440 -> <class 'NoneType'> 9221552
+
+Total nodes in IR: 24 
+
+navigating children of <class 'ir.DefinitionList'> 281473792137584 1
+Cannot lower 281473792177392 <class 'ir.DefinitionList'> 'DefinitionList' object has no attribute 'lower'
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791872784
+navigating children of <class 'ir.StatList'> 281473792177440 2
+navigating children of <class 'ir.BinExpr'> 281473791872496 3
+StatList : new 281473791931632
+Lowering <class 'ir.Var'> 281473791872304
+StatList : new 281473791931920
+Lowering <class 'ir.Var'> 281473791872400
+StatList : new 281473791932160
+Lowering <class 'ir.BinExpr'> 281473791872496
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791872592
+StatList : new 281473791932352
+Lowering <class 'ir.AssignStat'> 281473791872592
+StatList : new 281473791932496
+Lowering <class 'ir.Var'> 281473791872640
+successfully navigated attr  expr  of <class 'ir.ReturnStat'> 281473791872736
+[DEBUG] ReturnStat.expr :  <class 'ir.StatList'> 281473791932496 {
+parent = 281473791872736
+	children:
+	reg int t3 <- auto int y
+}
+Cannot lower 281473791872736 <class 'ir.ReturnStat'> name 'RetStat' is not defined
+Cannot lower 281473792177440 <class 'ir.StatList'> 'StatList' object has no attribute 'lower'
+successfully navigated attr  body  of <class 'ir.Block'> 281473791872784
+Cannot lower 281473791872784 <class 'ir.Block'> 'Block' object has no attribute 'lower'
+successfully navigated attr  body  of <class 'ir.FunctionDef'> 281473791872832
+Cannot lower 281473791872832 <class 'ir.FunctionDef'> 'FunctionDef' object has no attribute 'lower'
+Cannot lower 281473792137584 <class 'ir.DefinitionList'> 'DefinitionList' object has no attribute 'lower'
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.StatList'> 281473791872928 4
+navigating children of <class 'ir.UnExpr'> 281473791930528 2
+StatList : new 281473791931776
+Lowering <class 'ir.Const'> 281473791930432
+StatList : new 281473791932880
+Lowering <class 'ir.UnExpr'> 281473791930528
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791930624
+StatList : new 281473791933024
+Lowering <class 'ir.AssignStat'> 281473791930624
+navigating children of <class 'ir.PrintStat'> 281473791930768 1
+StatList : new 281473791933168
+Lowering <class 'ir.Var'> 281473791930672
+StatList : new 281473791933360
+Lowering <class 'ir.Var'> 281473791930672
+successfully navigated attr  expr  of <class 'ir.PrintStat'> 281473791930768
+StatList : new 281473791933504
+Lowering <class 'ir.PrintStat'> 281473791930768
+navigating children of <class 'ir.CallExpr'> 281473791930960 1
+StatList : new 281473791933744
+Lowering <class 'ir.Var'> 281473791930864
+Cannot lower 281473791930960 <class 'ir.CallExpr'> 'CallExpr' object has no attribute 'lower'
+successfully navigated attr  call  of <class 'ir.CallStat'> 281473791931056
+Lowering <class 'ir.CallStat'> 281473791931056
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791931152
+Cannot lower 281473791931152 <class 'ir.AssignStat'> 'BranchStat' object has no attribute 'destination'
+navigating children of <class 'ir.PrintStat'> 281473791931296 1
+StatList : new 281473791934032
+Lowering <class 'ir.Var'> 281473791931200
+StatList : new 281473791934176
+Lowering <class 'ir.Var'> 281473791931200
+successfully navigated attr  expr  of <class 'ir.PrintStat'> 281473791931296
+StatList : new 281473791934320
+Lowering <class 'ir.PrintStat'> 281473791931296
+Cannot lower 281473791872928 <class 'ir.StatList'> 'StatList' object has no attribute 'lower'
+successfully navigated attr  body  of <class 'ir.Block'> 281473791931440
+Cannot lower 281473791931440 <class 'ir.Block'> 'Block' object has no attribute 'lower'
+navigating children of <class 'ir.DefinitionList'> 281473792137584 1
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791872784
+navigating children of <class 'ir.StatList'> 281473792177440 2
+navigating children of <class 'ir.StatList'> 281473791932352 2
+navigating children of <class 'ir.StatList'> 281473791932160 3
+navigating children of <class 'ir.StatList'> 281473791931632 1
+navigating children of <class 'ir.StatList'> 281473791931920 1
+navigating children of <class 'ir.StatList'> 281473791932496 1
+successfully navigated attr  expr  of <class 'ir.ReturnStat'> 281473791872736
+successfully navigated attr  body  of <class 'ir.Block'> 281473791872784
+successfully navigated attr  body  of <class 'ir.FunctionDef'> 281473791872832
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.StatList'> 281473791872928 4
+navigating children of <class 'ir.StatList'> 281473791933024 2
+navigating children of <class 'ir.StatList'> 281473791932880 2
+navigating children of <class 'ir.StatList'> 281473791931776 1
+navigating children of <class 'ir.StatList'> 281473791933504 2
+navigating children of <class 'ir.StatList'> 281473791933360 1
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791931152
+navigating children of <class 'ir.StatList'> 281473791934320 2
+navigating children of <class 'ir.StatList'> 281473791934176 1
+successfully navigated attr  body  of <class 'ir.Block'> 281473791931440
+
+ <class 'ir.Block'> 281473791931440 {
+                                                                      <<<<<----- BUG? MISSING PARENT
+	global_symtab: 	SymbolTable:
+	
+	defs: 	<class 'ir.DefinitionList'> 281473792137584 {
+	parent = 281473791931440
+		children:
+		<class 'ir.FunctionDef'> 281473791872832 {
+		parent = 281473792137584
+			body: 	<class 'ir.Block'> 281473791872784 {
+			parent = 281473791872832
+				global_symtab: 	SymbolTable:
+				global int x
+				global int squ
+				param int return
+				auto function square
+				
+				defs: 	<class 'ir.DefinitionList'> 281473792177392 {
+				parent = 281473791872784
+				}
+				body: 	<class 'ir.StatList'> 281473792177440 {
+				parent = 281473791872784
+					children:
+					<class 'ir.StatList'> 281473791932352 {
+					parent = 281473792177440
+						children:
+						<class 'ir.StatList'> 281473791932160 {
+						parent = 281473791932352
+							children:
+							<class 'ir.StatList'> 281473791931632 {
+							parent = 281473791932160
+								children:
+								reg int t0 <- auto int y
+							}
+							<class 'ir.StatList'> 281473791931920 {
+							parent = 281473791932160
+								children:
+								reg int t1 <- auto int y
+							}
+							reg int32_t t2 <- reg int t0 times reg int t1
+						}
+						auto int y <- reg int32_t t2
+					}
+					<class 'ir.ReturnStat'> 281473791872736 {
+					parent = 281473792177440
+						expr: 	<class 'ir.StatList'> 281473791932496 {
+						parent = 281473791872736
+							children:
+							reg int t3 <- auto int y
+						}
+					}
+				}
+			}
+			symbol: 	auto function square
+		}
+	}
+	body: 	<class 'ir.StatList'> 281473791872928 {
+	parent = 281473791931440
+		children:
+		<class 'ir.StatList'> 281473791933024 {
+		parent = 281473791872928
+			children:
+			<class 'ir.StatList'> 281473791932880 {
+			parent = 281473791933024
+				children:
+				<class 'ir.StatList'> 281473791931776 {
+				parent = 281473791932880
+					children:
+					reg int t4 <- 1
+				}
+				reg int t5 <- minus reg int t4
+			}
+			global int x <- reg int t5
+		}
+		<class 'ir.StatList'> 281473791933504 {
+		parent = 281473791872928
+			children:
+			<class 'ir.StatList'> 281473791933360 {
+			parent = 281473791933504
+				children:
+				reg int t7 <- global int x
+			}
+			print reg int t7
+		}
+		<class 'ir.AssignStat'> 281473791931152 {
+		parent = 281473791872928
+			expr: 	call  to auto function square
+			offset: 	None
+			symbol: 	global int x
+		}
+		<class 'ir.StatList'> 281473791934320 {
+		parent = 281473791872928
+			children:
+			<class 'ir.StatList'> 281473791934176 {
+			parent = 281473791934320
+				children:
+				reg int t10 <- global int x
+			}
+			print reg int t10
+		}
+	}
+} 
+
+<class 'ir.DefinitionList'> 281473792177392
+<class 'ir.LoadStat'> 281473791931488
+<class 'ir.StatList'> 281473791931632
+Flattening 281473791931632 into 281473791932160
+<class 'ir.LoadStat'> 281473791931872
+<class 'ir.StatList'> 281473791931920
+Flattening 281473791931920 into 281473791932160
+<class 'ir.BinStat'> 281473791932016
+<class 'ir.StatList'> 281473791932160
+Flattening 281473791932160 into 281473791932352
+<class 'ir.StoreStat'> 281473791932304
+<class 'ir.StatList'> 281473791932352
+Flattening 281473791932352 into 281473792177440
+<class 'ir.LoadStat'> 281473791932256
+<class 'ir.StatList'> 281473791932496
+Not flattening 281473791932496 into 281473791872736 of type <class 'ir.ReturnStat'>
+<class 'ir.ReturnStat'> 281473791872736
+<class 'ir.StatList'> 281473792177440
+Not flattening 281473792177440 into 281473791872784 of type <class 'ir.Block'>
+<class 'ir.Block'> 281473791872784
+<class 'ir.FunctionDef'> 281473791872832
+<class 'ir.DefinitionList'> 281473792137584
+<class 'ir.LoadImmStat'> 281473791931728
+<class 'ir.StatList'> 281473791931776
+Flattening 281473791931776 into 281473791932880
+<class 'ir.UnaryStat'> 281473791932688
+<class 'ir.StatList'> 281473791932880
+Flattening 281473791932880 into 281473791933024
+<class 'ir.StoreStat'> 281473791932976
+<class 'ir.StatList'> 281473791933024
+Flattening 281473791933024 into 281473791872928
+<class 'ir.LoadStat'> 281473791933216
+<class 'ir.StatList'> 281473791933360
+Flattening 281473791933360 into 281473791933504
+<class 'ir.PrintCommand'> 281473791933456
+<class 'ir.StatList'> 281473791933504
+Flattening 281473791933504 into 281473791872928
+<class 'ir.BranchStat'> 281473791933792
+<class 'ir.AssignStat'> 281473791931152
+<class 'ir.LoadStat'> 281473791933984
+<class 'ir.StatList'> 281473791934176
+Flattening 281473791934176 into 281473791934320
+<class 'ir.PrintCommand'> 281473791934272
+<class 'ir.StatList'> 281473791934320
+Flattening 281473791934320 into 281473791872928
+<class 'ir.StatList'> 281473791872928
+Not flattening 281473791872928 into 281473791931440 of type <class 'ir.Block'>
+<class 'ir.Block'> 281473791931440
+
+ <class 'ir.Block'> 281473791931440 {
+                                                                      <<<<<----- BUG? MISSING PARENT
+	global_symtab: 	SymbolTable:
+	
+	defs: 	<class 'ir.DefinitionList'> 281473792137584 {
+	parent = 281473791931440
+		children:
+		<class 'ir.FunctionDef'> 281473791872832 {
+		parent = 281473792137584
+			body: 	<class 'ir.Block'> 281473791872784 {
+			parent = 281473791872832
+				global_symtab: 	SymbolTable:
+				global int x
+				global int squ
+				param int return
+				auto function square
+				
+				defs: 	<class 'ir.DefinitionList'> 281473792177392 {
+				parent = 281473791872784
+				}
+				body: 	<class 'ir.StatList'> 281473792177440 {
+				parent = 281473791872784
+					children:
+					reg int t0 <- auto int y
+					reg int t1 <- auto int y
+					reg int32_t t2 <- reg int t0 times reg int t1
+					auto int y <- reg int32_t t2
+					<class 'ir.ReturnStat'> 281473791872736 {
+					parent = 281473792177440
+						expr: 	<class 'ir.StatList'> 281473791932496 {
+						parent = 281473791872736
+							children:
+							reg int t3 <- auto int y
+						}
+					}
+				}
+			}
+			symbol: 	auto function square
+		}
+	}
+	body: 	<class 'ir.StatList'> 281473791872928 {
+	parent = 281473791931440
+		children:
+		reg int t4 <- 1
+		reg int t5 <- minus reg int t4
+		global int x <- reg int t5
+		reg int t7 <- global int x
+		print reg int t7
+		<class 'ir.AssignStat'> 281473791931152 {
+		parent = 281473791872928
+			expr: 	call  to auto function square
+			offset: 	None
+			symbol: 	global int x
+		}
+		reg int t10 <- global int x
+		print reg int t10
+	}
+} 
+
+navigating children of <class 'ir.DefinitionList'> 281473792137584 1
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791872784
+navigating children of <class 'ir.StatList'> 281473792177440 5
+navigating children of <class 'ir.StatList'> 281473791932496 1
+successfully navigated attr  expr  of <class 'ir.ReturnStat'> 281473791872736
+successfully navigated attr  body  of <class 'ir.Block'> 281473791872784
+successfully navigated attr  body  of <class 'ir.FunctionDef'> 281473791872832
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.StatList'> 281473791872928 8
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791931152
+successfully navigated attr  body  of <class 'ir.Block'> 281473791931440
+
+
+DATALAYOUT
+
+
+
+ <class 'ir.Block'> 281473791931440 {
+                                                                      <<<<<----- BUG? MISSING PARENT
+	global_symtab: 	SymbolTable:
+	
+	defs: 	<class 'ir.DefinitionList'> 281473792137584 {
+	parent = 281473791931440
+		children:
+		<class 'ir.FunctionDef'> 281473791872832 {
+		parent = 281473792137584
+			body: 	<class 'ir.Block'> 281473791872784 {
+			parent = 281473791872832
+				global_symtab: 	SymbolTable:
+				global int x; _g_x: def byte 4
+				global int squ; _g_squ: def byte 4
+				param int return; _g_return: def byte 4
+				auto function square
+				
+				defs: 	<class 'ir.DefinitionList'> 281473792177392 {
+				parent = 281473791872784
+				}
+				body: 	<class 'ir.StatList'> 281473792177440 {
+				parent = 281473791872784
+					children:
+					reg int t0 <- auto int y; _l_square_y: fp + (-4) [def byte 4]
+					reg int t1 <- auto int y; _l_square_y: fp + (-4) [def byte 4]
+					reg int32_t t2 <- reg int t0 times reg int t1
+					auto int y; _l_square_y: fp + (-4) [def byte 4] <- reg int32_t t2
+					<class 'ir.ReturnStat'> 281473791872736 {
+					parent = 281473792177440
+						expr: 	<class 'ir.StatList'> 281473791932496 {
+						parent = 281473791872736
+							children:
+							reg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]
+						}
+					}
+				}
+			}
+			symbol: 	auto function square
+		}
+	}
+	body: 	<class 'ir.StatList'> 281473791872928 {
+	parent = 281473791931440
+		children:
+		reg int t4 <- 1
+		reg int t5 <- minus reg int t4
+		global int x; _g_x: def byte 4 <- reg int t5
+		reg int t7 <- global int x; _g_x: def byte 4
+		print reg int t7
+		<class 'ir.AssignStat'> 281473791931152 {
+		parent = 281473791872928
+			expr: 	call  to auto function square
+			offset: 	None
+			symbol: 	global int x; _g_x: def byte 4
+		}
+		reg int t10 <- global int x; _g_x: def byte 4
+		print reg int t10
+	}
+} 
+
+navigating children of <class 'ir.DefinitionList'> 281473792137584 1
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791872784
+navigating children of <class 'ir.StatList'> 281473792177440 5
+navigating children of <class 'ir.StatList'> 281473791932496 1
+successfully navigated attr  expr  of <class 'ir.ReturnStat'> 281473791872736
+successfully navigated attr  body  of <class 'ir.Block'> 281473791872784
+successfully navigated attr  body  of <class 'ir.FunctionDef'> 281473791872832
+successfully navigated attr  defs  of <class 'ir.Block'> 281473791931440
+navigating children of <class 'ir.StatList'> 281473791872928 8
+successfully navigated attr  expr  of <class 'ir.AssignStat'> 281473791931152
+successfully navigated attr  body  of <class 'ir.Block'> 281473791931440
+Liveness sets
+281473791931200 [label="BB281473791931200{\nreg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]}"];
+281473791931200 -> exit281473791872832 [label="{global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}"];
+
+gen: {auto int y; _l_square_y: fp + (-4) [def byte 4]}
+kill: {reg int t3}
+live_in: {global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}
+live_out: {global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}
+281473791932592 [label="BB281473791932592{\nreg int t0 <- auto int y; _l_square_y: fp + (-4) [def byte 4]\nreg int t1 <- auto int y; _l_square_y: fp + (-4) [def byte 4]\nreg int32_t t2 <- reg int t0 times reg int t1\nauto int y; _l_square_y: fp + (-4) [def byte 4] <- reg int32_t t2\n<class 'ir.ReturnStat'> 281473791872736 {
+parent = 281473792177440
+	expr: 	<class 'ir.StatList'> 281473791932496 {
+	parent = 281473791872736
+		children:
+		reg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]
+	}
+}}"];
+281473791932592 -> exit281473791872832 [label="{global int x; _g_x: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4], global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}"];
+
+gen: {auto int y; _l_square_y: fp + (-4) [def byte 4]}
+kill: {reg int t1, reg int t0, reg int32_t t2, auto int y; _l_square_y: fp + (-4) [def byte 4]}
+live_in: {global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}
+live_out: {global int x; _g_x: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4], global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}
+281473791930528 [label="BB281473791930528{\nreg int t4 <- 1\nreg int t5 <- minus reg int t4\nglobal int x; _g_x: def byte 4 <- reg int t5\nreg int t7 <- global int x; _g_x: def byte 4\nprint reg int t7\n<class 'ir.AssignStat'> 281473791931152 {
+parent = 281473791872928
+	expr: 	call  to auto function square
+	offset: 	None
+	symbol: 	global int x; _g_x: def byte 4
+}\nreg int t10 <- global int x; _g_x: def byte 4\nprint reg int t10}"];
+281473791930528 -> exit281473792670448 [label="set()"];
+
+gen: set()
+kill: {global int x; _g_x: def byte 4, reg int t10, reg int t4, reg int t5, reg int t7}
+live_in: set()
+live_out: set()
+
+Instruction liveness
+BASIC BLOCK:
+281473791931200 [label="BB281473791931200{\nreg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]}"];
+281473791931200 -> exit281473791872832 [label="{global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}"];
+
+
+inst=reg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]                    live_in={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}                                           live_out={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}
+BASIC BLOCK:
+281473791932592 [label="BB281473791932592{\nreg int t0 <- auto int y; _l_square_y: fp + (-4) [def byte 4]\nreg int t1 <- auto int y; _l_square_y: fp + (-4) [def byte 4]\nreg int32_t t2 <- reg int t0 times reg int t1\nauto int y; _l_square_y: fp + (-4) [def byte 4] <- reg int32_t t2\n<class 'ir.ReturnStat'> 281473791872736 {
+parent = 281473792177440
+	expr: 	<class 'ir.StatList'> 281473791932496 {
+	parent = 281473791872736
+		children:
+		reg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]
+	}
+}}"];
+281473791932592 -> exit281473791872832 [label="{global int x; _g_x: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4], global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}"];
+
+
+inst=reg int t0 <- auto int y; _l_square_y: fp + (-4) [def byte 4]                    live_in={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4]}                                           live_out={global int x; _g_x: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4], global int squ; _g_squ: def byte 4, reg int t0, param int return; _g_return: def byte 4}
+inst=reg int t1 <- auto int y; _l_square_y: fp + (-4) [def byte 4]                    live_in={global int x; _g_x: def byte 4, auto int y; _l_square_y: fp + (-4) [def byte 4], global int squ; _g_squ: def byte 4, reg int t0, param int return; _g_return: def byte 4}                               live_out={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, reg int t1, reg int t0, param int return; _g_return: def byte 4}
+inst=reg int32_t t2 <- reg int t0 times reg int t1                                    live_in={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, reg int t1, reg int t0, param int return; _g_return: def byte 4}                                                                    live_out={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, reg int32_t t2, param int return; _g_return: def byte 4}
+inst=auto int y; _l_square_y: fp + (-4) [def byte 4] <- reg int32_t t2                live_in={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, reg int32_t t2, param int return; _g_return: def byte 4}                                                                            live_out={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}
+inst=<class 'ir.ReturnStat'> 281473791872736 {
+parent = 281473792177440
+	expr: 	<class 'ir.StatList'> 281473791932496 {
+	parent = 281473791872736
+		children:
+		reg int t3 <- auto int y; _l_square_y: fp + (-4) [def byte 4]
+	}
+} live_in={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}                                                                                            live_out={global int x; _g_x: def byte 4, global int squ; _g_squ: def byte 4, param int return; _g_return: def byte 4}
+BASIC BLOCK:
+281473791930528 [label="BB281473791930528{\nreg int t4 <- 1\nreg int t5 <- minus reg int t4\nglobal int x; _g_x: def byte 4 <- reg int t5\nreg int t7 <- global int x; _g_x: def byte 4\nprint reg int t7\n<class 'ir.AssignStat'> 281473791931152 {
+parent = 281473791872928
+	expr: 	call  to auto function square
+	offset: 	None
+	symbol: 	global int x; _g_x: def byte 4
+}\nreg int t10 <- global int x; _g_x: def byte 4\nprint reg int t10}"];
+281473791930528 -> exit281473792670448 [label="set()"];
+
+
+inst=reg int t4 <- 1                                                                  live_in=set()                                                                                                                                                                                                    live_out={reg int t4}                                                                    
+inst=reg int t5 <- minus reg int t4                                                   live_in={reg int t4}                                                                                                                                                                                             live_out={reg int t5}                                                                    
+inst=global int x; _g_x: def byte 4 <- reg int t5                                     live_in={reg int t5}                                                                                                                                                                                             live_out={global int x; _g_x: def byte 4}                                                
+inst=reg int t7 <- global int x; _g_x: def byte 4                                     live_in={global int x; _g_x: def byte 4}                                                                                                                                                                         live_out={reg int t7}                                                                    
+inst=print reg int t7                                                                 live_in={reg int t7}                                                                                                                                                                                             live_out=set()                                                                           
+inst=<class 'ir.AssignStat'> 281473791931152 {
+parent = 281473791872928
+	expr: 	call  to auto function square
+	offset: 	None
+	symbol: 	global int x; _g_x: def byte 4
+} live_in=set()                                                                                                                                                                                                    live_out={global int x; _g_x: def byte 4}                                                
+inst=reg int t10 <- global int x; _g_x: def byte 4                                    live_in={global int x; _g_x: def byte 4}                                                                                                                                                                         live_out={reg int t10}                                                                   
+inst=print reg int t10                                                                live_in={reg int t10}                                                                                                                                                                                            live_out=set()                                                                           
+
+
+REGALLOC
+
+
+DEBUG:
+[{'var': reg int t7, 'interv': range(9, 10)}, {'var': reg int t1, 'interv': range(2, 3)}, {'var': reg int t5, 'interv': range(7, 8)}, {'var': reg int t10, 'interv': range(12, 13)}, {'var': reg int t4, 'interv': range(6, 7)}, {'var': reg int32_t t2, 'interv': range(3, 4)}, {'var': reg int t0, 'interv': range(1, 3)}, {'var': reg int t3, 'interv': range(0, 0)}]

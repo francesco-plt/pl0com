@@ -1,0 +1,11 @@
+VAR x,y,z;
+
+{This is a comment. You can write anything you want in a comment}
+
+ 
+BEGIN
+  x := 0;
+  while x < 10 do begin
+    !x++
+  end;
+END.

@@ -127,12 +127,14 @@ class Symbol:
         4. imm: allocation to an immediate
     """
 
-    def __init__(self, name, stype, value=None, alloct="auto"):
+    def __init__(self, name, stype, npar=None, value=None, alloct="auto"):
         self.name = name
         self.stype = stype
         self.value = value  # if not None, it is a constant
         self.alloct = alloct
         self.allocinfo = None
+        # number of parameters in case this symbol is a function
+        self.npar = npar
 
     def set_alloc_info(self, allocinfo):
         self.allocinfo = allocinfo
@@ -452,61 +454,22 @@ class UnExpr(Expr):
         statl = [self.children[1], stmt]
         return self.parent.replace(self, StatList(children=statl, symtab=self.symtab))
 
-
+# looks like this is just a jump to a label
 class CallExpr(Expr):
     def __init__(self, parent=None, function=None, parameters=None, symtab=None):
         super().__init__(parent, [], symtab)
         self.symbol = function
+        
         # parameters are ignored
         if parameters:
             self.children = parameters[:]
         else:
             self.children = []
-
-
-class IncOp(IRNode):
-    # up until lower this is straight copypaste from AssignStat
-    def __init__(self, parent=None, var=None, op=None, symtab=None):
-        super().__init__(parent, [], symtab)
-        self.symbol = var
-        self.op = op
-        print("[OPERATOR]: ", op)
-        # no idea what this does, copied from AssignStat(Stat)
-        try:
-            self.symbol.parent = self
-        except AttributeError:
-            pass
-
-    def collect_uses(self):
-        return [self.symbol]
-
-    def collect_kills(self):
-        return [self.symbol]
-
-
-    def lower(self):
-        statements = []
-        
-        # loading the value of the variable we're working with in memory
-        load_var = new_temporary(self.symtab, self.symbol.stype)
-        statements += [LoadStat(dest=load_var, symbol=self.symbol, symtab=self.symtab)]
-        
-        # loading 1 (to be summed to the var) in memory
-        load_one_imm = new_temporary(self.symtab, self.symbol.stype)
-        statements += [LoadImmStat(dest=load_one_imm, val=1, symtab=self.symtab)]
-        
-        # summing up the two (var + 1)
-        inc_var = new_temporary(self.symtab, self.symbol.stype)
-        statements += [BinStat(dest=inc_var, op='plus', srca=load_var, srcb=load_one_imm, symtab=self.symtab)]
-        
-        # and storing back the result
-        statements += [StoreStat(dest=self.symbol, symbol=inc_var, symtab=self.symtab)]
-        
-        return self.parent.replace(self, StatList(children=statements, symtab=self.symtab))
-
+            
+        for c in self.children:
+            c.parent = self
 
 # STATEMENTS
-
 
 class Stat(IRNode):  # abstract
     def __init__(self, parent=None, children=None, symtab=None):
@@ -737,6 +700,45 @@ class AssignStat(Stat):
 
         return self.parent.replace(self, StatList(children=stats, symtab=self.symtab))
 
+
+class ReturnStat(Stat):
+    def __init__(self, parent=None, exp=None, symtab=None):
+        super().__init__(parent, [], symtab)
+        self.expr = exp
+        self.ret_param_symbol = None
+        self.expr.parent = self
+        self.end_label = None
+
+    def set_end_label(self, label):
+        self.end_label = label
+
+    def set_ret_param_symbol(self, sym):
+        self.ret_param_symbol = sym
+
+
+
+    def lower(self):
+        print("[DEBUG] ReturnStat.expr : ", self.expr)
+        # evaluate exp
+        # store value in ret param
+        stlist = [
+                self.expr, 
+                StoreStat(dest=self.ret_param_symbol, symbol=self.expr.destination(), symtab=self.symtab)
+            ]
+
+        stlist += [RetStat(use=self.ret_param_symbol)]
+        stlist = StatList(children=stlist, symtab=self.symtab)
+        return self.parent.replace(self, stlist)
+
+class RetStat(Stat):  # low-level node
+    def __init__(self, use=None, parent=None, children=None, symtab=None):
+        super().__init__(parent, children, symtab)
+        self.use = use
+
+    def collect_uses(self):
+        return [self.use]
+
+        
 
 class PrintStat(Stat):
     def __init__(self, parent=None, exp=None, symtab=None):
@@ -1079,6 +1081,71 @@ class StatList(Stat):  # low-level node
                 pass
         return None
 
+class IncExpr(IRNode):
+    def __init__(self, parent=None, var=None, op=None, symtab=None):
+        super().__init__(parent, [], symtab)
+        self.symbol = var
+        self.op = op
+        print("[OPERATOR]: ", op)
+        # no idea what this does, copied from AssignStat(Stat)
+        try:
+            self.symbol.parent = self
+        except AttributeError:
+            pass
+
+    def collect_uses(self):
+        return [self.symbol]
+
+    def collect_kills(self):
+        return [self.symbol]
+
+
+    def lower(self):
+        statements = []
+        
+        # loading var
+        new_ld_d = new_temporary(self.symtab, self.symbol.stype)
+        statements += [LoadStat(dest=new_ld_d, symbol=self.symbol, symtab=self.symtab)]
+        
+        # loading 1 in an immediate
+        new_li1_d = new_temporary(self.symtab, self.symbol.stype)
+        statements += [LoadImmStat(dest=new_li1_d, val=1, symtab=self.symtab)]
+        
+        # adding 1 to var
+        new_inc_d = new_temporary(self.symtab, self.symbol.stype)
+        statements += [BinStat(dest=new_inc_d, op='plus', srca=new_ld_d, srcb=new_li1_d, symtab=self.symtab)]
+        
+        # storing the result
+        statements += [StoreStat(dest=self.symbol, symbol=new_inc_d, symtab=self.symtab)]
+        
+        statements += [DestRedirectStat(self.parent, dest=new_ld_d, symtab=self.symtab)]
+        
+        return self.parent.replace(self, StatList(children=statements, symtab=self.symtab))
+
+class IncExpr2(IRNode):
+    def __init__(self, parent=None, var=None, op=None, symtab=None):
+        super().__init__(parent, [], symtab)
+        self.symbol = var
+        self.op = op
+        print("[OPERATOR]: ", op)
+
+        try:
+            self.symbol.parent = self
+        except AttributeError:
+            pass
+
+        def lower(self):
+            statements = []
+            statements += AssignStat(
+                dest=self.symbol,
+                expr=ir.BinExpr(
+                    children=["plus", LoadStat(self.factor(symtab.find(self.value))), ir.Const(value=1, symtab=symtab)],
+                    symtab=symtab,
+                ),
+                symtab=symtab
+            )
+            return self.parent.replace(self, StatList(children=statements, symtab=self.symtab))
+
 
 class Block(Stat):
     def __init__(self, parent=None, gl_sym=None, lc_sym=None, defs=None, body=None):
@@ -1092,7 +1159,6 @@ class Block(Stat):
 
 
 # DEFINITIONS
-
 
 class Definition(IRNode):
     def __init__(self, parent=None, symbol=None):
